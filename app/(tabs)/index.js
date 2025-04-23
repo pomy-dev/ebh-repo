@@ -13,11 +13,11 @@ const HomeScreen = () => {
         style={styles.header}
       >
         <View>
-          <Text style={styles.greeting}>Hello, Alex</Text>
+          <Text style={styles.greeting}>Hello, Pomy</Text>
           <Text style={styles.subtitle}>Welcome to your dashboard</Text>
         </View>
         <Image
-          source={{ uri: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }}
+          source={require('../../assets/pomy.png')}
           style={styles.avatar}
         />
       </View>
@@ -33,7 +33,7 @@ const HomeScreen = () => {
         >
           <View style={styles.propertyCard}>
             <Image
-              source={{ uri: 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }}
+              source={require('../../assets/house1.jpg')}
               style={styles.propertyImage}
             />
             <View style={styles.propertyInfo}>
