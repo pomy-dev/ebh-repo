@@ -1,63 +1,44 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { Home, DollarSign, ClipboardList } from "lucide-react-native";
-import { MotiView } from "moti";
-import { useRouter } from 'expo-router'
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Chrome as Home, DollarSign, ClipboardList } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 
 export default function LandingScreen() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <MotiView
-        from={{ opacity: 0, translateY: 20 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ delay: 100, type: "timing" }}
-      >
-        <Image source={require("../assets/logo.png")} style={styles.logo} />
-      </MotiView>
+      <Image
+        source={{
+          uri: '../assets/logo.png',
+        }}
+        style={styles.logo}
+      />
 
-      <MotiView
-        from={{ opacity: 0, translateY: 20 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ delay: 200, type: "timing" }}
-        style={styles.iconsContainer}
-      >
-        <Home size={40} color="#2563EB" />
-        <DollarSign size={40} color="#16A34A" />
-        <ClipboardList size={40} color="#8B5CF6" />
-      </MotiView>
+      <View style={styles.iconsContainer}>
+        <View style={styles.iconWrapper}>
+          <Home size={36} color="#2563EB" />
+        </View>
+        <View style={styles.iconWrapper}>
+          <DollarSign size={36} color="#16A34A" />
+        </View>
+        <View style={styles.iconWrapper}>
+          <ClipboardList size={36} color="#8B5CF6" />
+        </View>
+      </View>
 
-      <MotiView
-        from={{ opacity: 0, translateY: 20 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ delay: 300, type: "timing" }}
-      >
-        <Text style={styles.title}>Welcome to RentEase</Text>
-      </MotiView>
+      <Text style={styles.title}>Welcome to Naku Ekhaya</Text>
 
-      <MotiView
-        from={{ opacity: 0, translateY: 20 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ delay: 400, type: "timing" }}
-      >
-        <Text style={styles.subtitle}>
-          Report maintenance issues, view rental details, and pay rent all in one easy-to-use app.
-        </Text>
-      </MotiView>
+      <Text style={styles.subtitle}>
+        Report maintenance issues, view rental details, and pay rent all in one easy-to-use app.
+      </Text>
 
-      <MotiView
-        from={{ opacity: 0, translateY: 20 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ delay: 500, type: "timing" }}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push('/(auth)/login')}
       >
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/Login")}
-        >
-          <Text style={styles.buttonText}>Continue To Login</Text>
-        </TouchableOpacity>
-      </MotiView>
+        <Text style={styles.buttonText}>Continue To Login</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -65,46 +46,59 @@ export default function LandingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E0E7FF",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#F8FAFC',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 24,
   },
   logo: {
-    width: 80,
-    height: 80,
-    marginBottom: 24,
-    resizeMode: "contain",
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#CBD5E1',
   },
   iconsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "60%",
-    marginBottom: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '70%',
+    marginBottom: 28,
+  },
+  iconWrapper: {
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 16,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#1F2937",
-    textAlign: "center",
-    marginBottom: 12,
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#1E293B',
+    textAlign: 'center',
+    marginBottom: 10,
   },
   subtitle: {
     fontSize: 16,
-    color: "#4B5563",
-    textAlign: "center",
-    marginBottom: 32,
-    paddingHorizontal: 10,
+    color: '#475569',
+    textAlign: 'center',
+    marginBottom: 36,
+    paddingHorizontal: 16,
   },
   button: {
-    backgroundColor: "#4F46E5",
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 12,
+    backgroundColor: '#6366F1',
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    borderRadius: 14,
+    elevation: 2,
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

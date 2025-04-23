@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuthProvider } from '../appstate/AuthContext';
+import { AuthProvider } from './auth-context';
 
 
 const GlobalContextProvider = ({ children }) => {
