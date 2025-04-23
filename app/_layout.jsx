@@ -3,8 +3,8 @@ import { useEffect } from 'react'
 import { useFonts } from 'expo-font'
 import 'react-native-url-polyfill/auto'
 import { SplashScreen, Stack } from 'expo-router'
-import { PaperProvider, MD3LightTheme, useTheme } from 'react-native-paper'
-import { useRouter } from 'expo-router'
+import { PaperProvider, MD3LightTheme } from 'react-native-paper'
+import GlobalContextProvider from '../context/app-state/global-context'
 
 const theme = {
   ...MD3LightTheme,

@@ -14,7 +14,7 @@ export default function LandingScreen() {
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ delay: 100, type: "timing" }}
       >
-        <Image source={require("@/assets/logo.png")} style={styles.logo} />
+        <Image source={require("../assets/logo.png")} style={styles.logo} />
       </MotiView>
 
       <MotiView
