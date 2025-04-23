@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-import { MotiView } from 'moti';
+// import { MotiView } from 'moti';
 import { Plus, Search, Clock, CircleCheck as CheckCircle2, TriangleAlert as AlertTriangle, Circle as XCircle } from 'lucide-react-native';
 
 const MaintenanceScreen = () => {
@@ -42,7 +42,7 @@ const MaintenanceScreen = () => {
 
   return (
     <View style={styles.container}>
-      <MotiView
+      <View
         from={{ opacity: 0, translateY: -10 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: 'timing', duration: 300 }}
@@ -52,9 +52,9 @@ const MaintenanceScreen = () => {
         <TouchableOpacity style={styles.addButton}>
           <Plus size={24} color="#FFFFFF" />
         </TouchableOpacity>
-      </MotiView>
+      </View>
 
-      <MotiView
+      <View
         from={{ opacity: 0, translateY: 20 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: 'timing', duration: 400, delay: 100 }}
@@ -67,9 +67,9 @@ const MaintenanceScreen = () => {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-      </MotiView>
+      </View>
 
-      <MotiView
+      <View
         from={{ opacity: 0, translateY: 20 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: 'timing', duration: 400, delay: 200 }}
@@ -105,13 +105,13 @@ const MaintenanceScreen = () => {
             <Text style={[styles.tabText, activeTab === 'completed' && styles.activeTabText]}>Completed</Text>
           </TouchableOpacity>
         </ScrollView>
-      </MotiView>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 300 }}
@@ -160,7 +160,7 @@ const MaintenanceScreen = () => {
               <Text style={styles.requestPriority}>High Priority</Text>
             </View>
           </TouchableOpacity>
-        </MotiView>
+        </View>
       </ScrollView>
     </View>
   );

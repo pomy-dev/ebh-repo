@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { MotiView } from 'moti';
+// import { MotiView } from 'moti';
 import { Bell, Info, DollarSign, ClipboardList, ChevronRight, CircleCheck as CheckCircle2 } from 'lucide-react-native';
 
 const NotificationsScreen = () => {
   return (
     <View style={styles.container}>
-      <MotiView
+      <View
         from={{ opacity: 0, translateY: -10 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: 'timing', duration: 300 }}
@@ -16,13 +16,13 @@ const NotificationsScreen = () => {
         <TouchableOpacity style={styles.settingsButton}>
           <Text style={styles.settingsText}>Settings</Text>
         </TouchableOpacity>
-      </MotiView>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 100 }}
@@ -66,9 +66,9 @@ const NotificationsScreen = () => {
               </Text>
             </View>
           </TouchableOpacity>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 200 }}
@@ -109,9 +109,9 @@ const NotificationsScreen = () => {
               </Text>
             </View>
           </TouchableOpacity>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 300 }}
@@ -140,9 +140,9 @@ const NotificationsScreen = () => {
               </View>
             </View>
           </TouchableOpacity>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 400 }}
@@ -152,7 +152,7 @@ const NotificationsScreen = () => {
             <Text style={styles.viewMoreText}>View Older Notifications</Text>
             <ChevronRight size={16} color="#4F46E5" />
           </TouchableOpacity>
-        </MotiView>
+        </View>
       </ScrollView>
     </View>
   );

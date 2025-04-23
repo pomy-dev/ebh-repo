@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Switch } from 'react-native';
-import { MotiView } from 'moti';
+// import { MotiView } from 'moti';
 import { User, CreditCard, Bell, Lock, CircleHelp as HelpCircle, LogOut, ChevronRight, Mail, Phone, Chrome as HomeIcon } from 'lucide-react-native';
 
 const SettingsScreen = () => {
@@ -10,20 +10,20 @@ const SettingsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <MotiView
+      <View
         from={{ opacity: 0, translateY: -10 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: 'timing', duration: 300 }}
         style={styles.header}
       >
         <Text style={styles.headerTitle}>Settings</Text>
-      </MotiView>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 100 }}
@@ -40,9 +40,9 @@ const SettingsScreen = () => {
           <TouchableOpacity style={styles.editButton}>
             <Text style={styles.editButtonText}>Edit</Text>
           </TouchableOpacity>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 200 }}
@@ -88,9 +88,9 @@ const SettingsScreen = () => {
             </View>
             <ChevronRight size={20} color="#9CA3AF" />
           </TouchableOpacity>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 300 }}
@@ -141,9 +141,9 @@ const SettingsScreen = () => {
               thumbColor="#FFFFFF"
             />
           </View>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 400 }}
@@ -168,7 +168,7 @@ const SettingsScreen = () => {
               <Text style={[styles.menuItemText, { color: '#DC2626' }]}>Log Out</Text>
             </View>
           </TouchableOpacity>
-        </MotiView>
+        </View>
 
         <View style={styles.versionContainer}>
           <Text style={styles.versionText}>RentEase v1.0.0</Text>

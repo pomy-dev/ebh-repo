@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { MotiView } from 'moti';
+// import { MotiView } from 'moti';
 import { Chrome as HomeIcon, DollarSign, ClipboardList, Bell, ArrowRight } from 'lucide-react-native';
 
 const HomeScreen = () => {
   return (
     <View style={styles.container}>
-      <MotiView
+      <View
         from={{ opacity: 0, translateY: -10 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: 'timing', duration: 300 }}
@@ -20,13 +20,13 @@ const HomeScreen = () => {
           source={{ uri: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }}
           style={styles.avatar}
         />
-      </MotiView>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 100 }}
@@ -51,9 +51,9 @@ const HomeScreen = () => {
               </View>
             </View>
           </View>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 200 }}
@@ -88,9 +88,9 @@ const HomeScreen = () => {
               <Text style={styles.actionText}>Alerts</Text>
             </TouchableOpacity>
           </View>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 300 }}
@@ -119,9 +119,9 @@ const HomeScreen = () => {
               <Text style={styles.notificationTime}>Yesterday</Text>
             </View>
           </View>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 400 }}
@@ -140,7 +140,7 @@ const HomeScreen = () => {
               style={styles.communityImage}
             />
           </TouchableOpacity>
-        </MotiView>
+        </View>
       </ScrollView>
     </View>
   );

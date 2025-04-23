@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { MotiView } from 'moti';
+// import { MotiView } from 'moti';
 import { CreditCard, DollarSign, CalendarDays, FileText, ChevronRight } from 'lucide-react-native';
 
 const PaymentsScreen = () => {
@@ -8,20 +8,20 @@ const PaymentsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <MotiView
+      <View
         from={{ opacity: 0, translateY: -10 }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: 'timing', duration: 300 }}
         style={styles.header}
       >
         <Text style={styles.headerTitle}>Payments</Text>
-      </MotiView>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 100 }}
@@ -37,9 +37,9 @@ const PaymentsScreen = () => {
           <TouchableOpacity style={styles.payButton}>
             <Text style={styles.payButtonText}>Pay Now</Text>
           </TouchableOpacity>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 200 }}
@@ -88,9 +88,9 @@ const PaymentsScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 300 }}
@@ -140,9 +140,9 @@ const PaymentsScreen = () => {
             </View>
             <Text style={styles.historyAmount}>$1,450.00</Text>
           </TouchableOpacity>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 400 }}
@@ -168,7 +168,7 @@ const PaymentsScreen = () => {
             </View>
             <ChevronRight size={20} color="#9CA3AF" />
           </TouchableOpacity>
-        </MotiView>
+        </View>
       </ScrollView>
     </View>
   );

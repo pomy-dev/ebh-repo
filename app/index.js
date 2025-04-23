@@ -9,9 +9,7 @@ export default function LandingScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={{
-          uri: '../assets/logo.png',
-        }}
+        source={require('../assets/logo.png')}
         style={styles.logo}
       />
 
@@ -52,11 +50,11 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   logo: {
-    width: 100,
-    height: 100,
+    // width: 100,
+    // height: 100,
     marginBottom: 20,
-    borderRadius: 50,
-    borderWidth: 2,
+    // borderRadius: 50,
+    // borderWidth: 2,
     borderColor: '#CBD5E1',
   },
   iconsContainer: {

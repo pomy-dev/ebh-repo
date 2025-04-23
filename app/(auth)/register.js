@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { MotiView } from 'moti';
+// import { MotiView } from 'moti';
 import { Lock, Mail, ArrowLeft, Eye, EyeOff } from 'lucide-react-native';
 
 const Login = () => {
@@ -25,7 +25,7 @@ const Login = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: -10 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 300 }}
@@ -35,29 +35,29 @@ const Login = () => {
             <ArrowLeft size={24} color="#4F46E5" />
           </TouchableOpacity>
           <Image source={require('../../assets/logo.png')} style={styles.logo} />
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 100 }}
         >
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to your account</Text>
-        </MotiView>
+        </View>
 
         {error && (
-          <MotiView
+          <View
             from={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'timing', duration: 300 }}
             style={styles.errorContainer}
           >
             <Text style={styles.errorText}>{error}</Text>
-          </MotiView>
+          </View>
         )}
 
-        <MotiView
+        <View
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 200 }}
@@ -102,9 +102,9 @@ const Login = () => {
           <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <Text style={styles.buttonText}>Sign In</Text>
           </TouchableOpacity>
-        </MotiView>
+        </View>
 
-        <MotiView
+        <View
           from={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ type: 'timing', duration: 400, delay: 300 }}
@@ -119,7 +119,7 @@ const Login = () => {
               Sign Up
             </Text>
           </Text>
-        </MotiView>
+        </View>
       </View>
     </ScrollView>
   );
