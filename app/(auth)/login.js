@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../../context/app-state/auth-context'
 
 import { Lock, Mail, ArrowLeft, Eye, EyeOff } from 'lucide-react-native';
 
@@ -8,27 +9,36 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
+  const { onLogin } = useAuth();
 
-  const handleLogin = () => {
+
+  const handleLogin = async () => {
+    setLoading(true);
     // Basic validation
     if (!email || !password) {
       setError('Email and password are required');
+      setLoading(false);
       return;
     }
-
-    // For demo purposes, redirect to tabs
-    router.push('/(tabs)');
+    const result = await onLogin(email, password);
+    if (result?.error) {
+      setError(result.msg);
+      setLoading(false);
+      console.log(result)
+    } else {
+      console.log(result || 'Login successful!');
+      setLoading(false);
+      router.push('/(tabs)');
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View
-          from={{ opacity: 0, translateY: -10 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 300 }}
           style={styles.header}
         >
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -38,9 +48,6 @@ export default function Login() {
         </View>
 
         <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 100 }}
         >
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to your account</Text>
@@ -48,9 +55,6 @@ export default function Login() {
 
         {error && (
           <View
-            from={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'timing', duration: 300 }}
             style={styles.errorContainer}
           >
             <Text style={styles.errorText}>{error}</Text>
@@ -58,9 +62,6 @@ export default function Login() {
         )}
 
         <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 200 }}
           style={styles.form}
         >
           <View style={styles.inputContainer}>
@@ -99,15 +100,14 @@ export default function Login() {
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Sign In</Text>
+          <TouchableOpacity style={styles.button} disabled={loading} onPress={handleLogin}>
+            {loading ?
+              (<ActivityIndicator size={30} color='#FFFFFFF' />)
+              : (<Text style={styles.buttonText}>Sign In</Text>)}
           </TouchableOpacity>
         </View>
 
         <View
-          from={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ type: 'timing', duration: 400, delay: 300 }}
           style={styles.footer}
         >
           <Text style={styles.footerText}>

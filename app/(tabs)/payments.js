@@ -8,9 +8,6 @@ const PaymentsScreen = () => {
   return (
     <View style={styles.container}>
       <View
-        from={{ opacity: 0, translateY: -10 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ type: 'timing', duration: 300 }}
         style={styles.header}
       >
         <Text style={styles.headerTitle}>Payments</Text>
@@ -21,9 +18,6 @@ const PaymentsScreen = () => {
         contentContainerStyle={styles.scrollContent}
       >
         <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 100 }}
           style={styles.upcomingCard}
         >
           <Text style={styles.upcomingTitle}>Upcoming Payment</Text>
@@ -38,11 +32,7 @@ const PaymentsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 200 }}
-        >
+        <View>
           <Text style={styles.sectionTitle}>Payment Methods</Text>
           <View style={styles.methodsContainer}>
             <TouchableOpacity
@@ -129,11 +119,7 @@ const PaymentsScreen = () => {
           </View>
         </View>
 
-        <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 300 }}
-        >
+        <View>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Payment History</Text>
             <TouchableOpacity>
@@ -181,11 +167,7 @@ const PaymentsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 400 }}
-        >
+        <View>
           <Text style={[styles.sectionTitle, { marginTop: 8 }]}>Quick Actions</Text>
 
           <TouchableOpacity style={styles.actionLink}>

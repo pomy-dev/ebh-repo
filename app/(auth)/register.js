@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Lock, Mail, User, ArrowLeft, Eye, EyeOff } from 'lucide-react-native';
+import { useAuth } from '../../context/app-state/auth-context'
 
 const Register = () => {
   const router = useRouter();
@@ -12,8 +13,9 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState(null);
+  const { onRegister } = useAuth();
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     // Basic validation
     if (!name || !email || !password || !confirmPassword) {
       setError('All fields are required');
@@ -25,17 +27,21 @@ const Register = () => {
       return;
     }
 
-    // For demo purposes, redirect to tabs
-    router.push('/(tabs)');
+    const result = await onRegister(name, email, password, confirmPassword);
+    if (result?.error) {
+      setError(result.msg);
+      console.log(result.msg)
+    } else {
+      console.log(result.msg || 'Registration successful!');
+      router.push('/login');
+    }
+
   };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View
-          from={{ opacity: 0, translateY: -10 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 300 }}
           style={styles.header}
         >
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -44,20 +50,13 @@ const Register = () => {
           <Image source={require('../../assets/logo.png')} style={styles.logo} />
         </View>
 
-        <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 100 }}
-        >
+        <View>
           <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>Sign up to get started</Text>
         </View>
 
         {error && (
           <View
-            from={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'timing', duration: 300 }}
             style={styles.errorContainer}
           >
             <Text style={styles.errorText}>{error}</Text>
@@ -65,9 +64,6 @@ const Register = () => {
         )}
 
         <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 200 }}
           style={styles.form}
         >
           <View style={styles.inputContainer}>
@@ -138,9 +134,6 @@ const Register = () => {
         </View>
 
         <View
-          from={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ type: 'timing', duration: 400, delay: 300 }}
           style={styles.footer}
         >
           <Text style={styles.footerText}>
