@@ -1,19 +1,28 @@
 import React from 'react';
+import { useRouter } from 'expo-router';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Switch } from 'react-native';
-
+import { useAuth } from '../../context/app-state/auth-context';
 import { User, CreditCard, Bell, Lock, CircleHelp as HelpCircle, LogOut, ChevronRight, Mail, Moon, Chrome as HomeIcon } from 'lucide-react-native';
 
 const SettingsScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [emailAlertsEnabled, setEmailAlertsEnabled] = React.useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = React.useState(false);
+  const { onLogout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    onLogout().then(() => {
+      console.log('Logged out!')
+      router.replace('/(auth)/login');
+    }).catch((error) => {
+      console.error('Logout failed:', error);
+    })
+  }
 
   return (
     <View style={styles.container}>
       <View
-        from={{ opacity: 0, translateY: -10 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ type: 'timing', duration: 300 }}
         style={styles.header}
       >
         <Text style={styles.headerTitle}>Settings</Text>
@@ -24,9 +33,6 @@ const SettingsScreen = () => {
         contentContainerStyle={styles.scrollContent}
       >
         <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 100 }}
           style={styles.profileSection}
         >
           <Image
@@ -43,9 +49,6 @@ const SettingsScreen = () => {
         </View>
 
         <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 200 }}
         >
           <Text style={styles.sectionTitle}>Account</Text>
 
@@ -91,9 +94,6 @@ const SettingsScreen = () => {
         </View>
 
         <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 300 }}
         >
           <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Preferences</Text>
 
@@ -144,9 +144,6 @@ const SettingsScreen = () => {
         </View>
 
         <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 400 }}
         >
           <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Support</Text>
 
@@ -160,7 +157,9 @@ const SettingsScreen = () => {
             <ChevronRight size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem}
+            onPress={handleLogout}
+          >
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#FEF2F2' }]}>
                 <LogOut size={20} color="#DC2626" />
