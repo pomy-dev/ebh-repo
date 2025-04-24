@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-// import { MotiView } from 'moti';
-import { CreditCard, DollarSign, CalendarDays, FileText, ChevronRight } from 'lucide-react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { CreditCard, DollarSign, Wallet, CalendarDays, FileText, ChevronRight } from 'lucide-react-native';
 
 const PaymentsScreen = () => {
   const [activeMethod, setActiveMethod] = useState('card');
@@ -29,11 +28,11 @@ const PaymentsScreen = () => {
         >
           <Text style={styles.upcomingTitle}>Upcoming Payment</Text>
           <View style={styles.amountContainer}>
-            <Text style={styles.currencySymbol}>$</Text>
+            <Text style={styles.currencySymbol}>E</Text>
             <Text style={styles.amountValue}>1,450</Text>
             <Text style={styles.amountCents}>.00</Text>
           </View>
-          <Text style={styles.dueDate}>Due on June 1, 2025</Text>
+          <Text style={styles.dueDate}>Due on April 30, 2025</Text>
           <TouchableOpacity style={styles.payButton}>
             <Text style={styles.payButtonText}>Pay Now</Text>
           </TouchableOpacity>
@@ -74,7 +73,7 @@ const PaymentsScreen = () => {
               ]}
               onPress={() => setActiveMethod('bank')}
             >
-              <DollarSign
+              <Wallet
                 size={24}
                 color={activeMethod === 'bank' ? '#FFFFFF' : '#6B7280'}
               />
@@ -84,7 +83,47 @@ const PaymentsScreen = () => {
                   activeMethod === 'bank' && styles.activeMethodText
                 ]}
               >
-                Bank Account
+                E-Wallet
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.methodCard,
+                activeMethod === 'momo' && styles.activeMethodCard
+              ]}
+              onPress={() => setActiveMethod('momo')}
+            >
+              <Image source={require('../../assets/momo.jpg')}
+                style={{ width: 30, height: 30 }}
+              />
+              <Text
+                style={[
+                  styles.methodText,
+                  activeMethod === 'momo' && styles.activeMethodText
+                ]}
+              >
+                MoMo Pay
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.methodCard,
+                activeMethod === 'insta' && styles.activeMethodCard
+              ]}
+              onPress={() => setActiveMethod('insta')}
+            >
+              <Image source={require('../../assets/instacash.png')}
+                style={{ width: 30, height: 30 }}
+              />
+              <Text
+                style={[
+                  styles.methodText,
+                  activeMethod === 'insta' && styles.activeMethodText
+                ]}
+              >
+                Insta-Cash
               </Text>
             </TouchableOpacity>
           </View>
@@ -112,7 +151,7 @@ const PaymentsScreen = () => {
                 <Text style={styles.historyDate}>May 1, 2025</Text>
               </View>
             </View>
-            <Text style={styles.historyAmount}>$1,450.00</Text>
+            <Text style={styles.historyAmount}>E1,450.00</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.historyCard}>
@@ -125,7 +164,7 @@ const PaymentsScreen = () => {
                 <Text style={styles.historyDate}>April 1, 2025</Text>
               </View>
             </View>
-            <Text style={styles.historyAmount}>$1,450.00</Text>
+            <Text style={styles.historyAmount}>E1,450.00</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.historyCard}>
@@ -138,7 +177,7 @@ const PaymentsScreen = () => {
                 <Text style={styles.historyDate}>March 1, 2025</Text>
               </View>
             </View>
-            <Text style={styles.historyAmount}>$1,450.00</Text>
+            <Text style={styles.historyAmount}>E1,450.00</Text>
           </TouchableOpacity>
         </View>
 
@@ -262,8 +301,9 @@ const styles = StyleSheet.create({
   },
   methodsContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 24,
+    marginBottom: 14,
   },
   methodCard: {
     width: '48%',
@@ -273,6 +313,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E5E7EB',
+    marginBottom: 15,
   },
   activeMethodCard: {
     backgroundColor: '#4F46E5',

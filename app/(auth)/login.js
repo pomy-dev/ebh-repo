@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-// import { MotiView } from 'moti';
+
 import { Lock, Mail, ArrowLeft, Eye, EyeOff } from 'lucide-react-native';
 
 export default function Login() {

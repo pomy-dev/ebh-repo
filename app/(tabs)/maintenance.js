@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-// import { MotiView } from 'moti';
+
 import { Plus, Search, Clock, CircleCheck as CheckCircle2, TriangleAlert as AlertTriangle, Circle as XCircle } from 'lucide-react-native';
 
 const MaintenanceScreen = () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Chrome as Home, ClipboardList, DollarSign, Settings, Bell } from 'lucide-react-native';
+import { Chrome as Home, ClipboardList, Wallet, Settings, Bell } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -40,7 +40,7 @@ export default function TabLayout() {
         name="payments"
         options={{
           title: 'Payments',
-          tabBarIcon: ({ color, size }) => <DollarSign size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Wallet size={size} color={color} />,
         }}
       />
       <Tabs.Screen

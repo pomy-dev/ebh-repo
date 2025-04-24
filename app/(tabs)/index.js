@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-// import { MotiView } from 'moti';
+
 import { Chrome as HomeIcon, DollarSign, ClipboardList, Bell, ArrowRight } from 'lucide-react-native';
 
 const HomeScreen = () => {
@@ -37,16 +37,16 @@ const HomeScreen = () => {
               style={styles.propertyImage}
             />
             <View style={styles.propertyInfo}>
-              <Text style={styles.propertyName}>Sunset Apartments</Text>
-              <Text style={styles.propertyAddress}>123 Main St, Apt 4B</Text>
+              <Text style={styles.propertyName}>E.N.P.F Apartments</Text>
+              <Text style={styles.propertyAddress}>Mathatha St, Apt 4B</Text>
               <View style={styles.propertyMeta}>
                 <View style={styles.propertyDetail}>
                   <Text style={styles.propertyDetailLabel}>Lease Ends</Text>
-                  <Text style={styles.propertyDetailValue}>Dec 31, 2025</Text>
+                  <Text style={styles.propertyDetailValue}>April 30, 2025</Text>
                 </View>
                 <View style={styles.propertyDetail}>
                   <Text style={styles.propertyDetailLabel}>Rent Due</Text>
-                  <Text style={styles.propertyDetailValue}>$1,450</Text>
+                  <Text style={styles.propertyDetailValue}>E1,450</Text>
                 </View>
               </View>
             </View>
@@ -128,15 +128,15 @@ const HomeScreen = () => {
         >
           <TouchableOpacity style={styles.communityCard}>
             <View style={styles.communityContent}>
-              <Text style={styles.communityTitle}>Community Events</Text>
-              <Text style={styles.communityDesc}>Check out upcoming events in your community</Text>
+              <Text style={styles.communityTitle}>Municipal News</Text>
+              <Text style={styles.communityDesc}>Street-lights re-wiring to start from 05 May 2025...</Text>
               <View style={styles.communityButton}>
-                <Text style={styles.communityButtonText}>Explore Events</Text>
+                <Text style={styles.communityButtonText}>Read More</Text>
                 <ArrowRight size={16} color="#FFFFFF" />
               </View>
             </View>
             <Image
-              source={{ uri: 'https://images.pexels.com/photos/7441761/pexels-photo-7441761.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }}
+              source={require('../../assets/street-light.jpg')}
               style={styles.communityImage}
             />
           </TouchableOpacity>

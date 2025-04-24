@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-// import { MotiView } from 'moti';
+
 import { Bell, Info, DollarSign, ClipboardList, ChevronRight, CircleCheck as CheckCircle2 } from 'lucide-react-native';
 
 const NotificationsScreen = () => {

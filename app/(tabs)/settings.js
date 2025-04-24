@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Switch } from 'react-native';
-// import { MotiView } from 'moti';
-import { User, CreditCard, Bell, Lock, CircleHelp as HelpCircle, LogOut, ChevronRight, Mail, Phone, Chrome as HomeIcon } from 'lucide-react-native';
+
+import { User, CreditCard, Bell, Lock, CircleHelp as HelpCircle, LogOut, ChevronRight, Mail, Moon, Chrome as HomeIcon } from 'lucide-react-native';
 
 const SettingsScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
@@ -30,12 +30,12 @@ const SettingsScreen = () => {
           style={styles.profileSection}
         >
           <Image
-            source={{ uri: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }}
+            source={require('../../assets/pomy.png')}
             style={styles.profileImage}
           />
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Alex Johnson</Text>
-            <Text style={styles.profileEmail}>alex.johnson@example.com</Text>
+            <Text style={styles.profileName}>Pomy Nxumalo</Text>
+            <Text style={styles.profileEmail}>pomy.nxumalo@gmail.com</Text>
           </View>
           <TouchableOpacity style={styles.editButton}>
             <Text style={styles.editButtonText}>Edit</Text>
@@ -130,7 +130,7 @@ const SettingsScreen = () => {
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#E0E7FF' }]}>
-                <Phone size={20} color="#4F46E5" />
+                <Moon size={20} color="#4F46E5" />
               </View>
               <Text style={styles.menuItemText}>Dark Mode</Text>
             </View>
@@ -171,7 +171,7 @@ const SettingsScreen = () => {
         </View>
 
         <View style={styles.versionContainer}>
-          <Text style={styles.versionText}>RentEase v1.0.0</Text>
+          <Text style={styles.versionText}>Naku Ekhaya v1.0.0</Text>
         </View>
       </ScrollView>
     </View>
