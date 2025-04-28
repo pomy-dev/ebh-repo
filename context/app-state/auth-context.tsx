@@ -54,10 +54,6 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.token}`;
       await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
 
-      // fetch user info
-      // const userRes = await axios.get(`${API_URL}/users/me`); // Update this endpoint if needed
-      // console.log("User info:", userRes.data);
-
       return result.data;
 
     } catch (e: any) {
