@@ -11,7 +11,8 @@ interface AuthProps {
   onUpdateUser?: (name: string | null, email: string | null) => Promise<any>;
 }
 
-const TOKEN_KEY = 'my-jwt-token';
+// const TOKEN_KEY = 'my-jwt-token';
+const TOKEN_KEY = 'dksopadmopamIOOADHSNKLndsdlkamisandioewqjeew8jdoaifna989r3u8rh9pq32h3np89PH9EWNLwnuiph98pry34879rhq3lfdnLHFRLWFNEWLNEUIHD398RH3WALNlufl';
 const API_URL = 'https://api.developbetterapps.com';
 const AuthContext = createContext<AuthProps>({});
 

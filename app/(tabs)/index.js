@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 
 import { Chrome as HomeIcon, DollarSign, ClipboardList, Bell, ArrowRight } from 'lucide-react-native';
-
+import { useRouter } from 'expo-router';
 const HomeScreen = () => {
+
+  const router = useRouter();
   return (
     <View style={styles.container}>
       <View
@@ -67,7 +69,7 @@ const HomeScreen = () => {
               <Text style={styles.actionText}>Pay Rent</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionCard}>
+            <TouchableOpacity style={styles.actionCard} onPress={() => { router.push('/(screens)/maintenance') }}>
               <View style={[styles.actionIcon, { backgroundColor: '#F0FDF4' }]}>
                 <ClipboardList size={24} color="#16A34A" />
               </View>
