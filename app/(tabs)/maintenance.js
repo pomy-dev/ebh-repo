@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 
 import { Plus, Search, Clock, CircleCheck as CheckCircle2, TriangleAlert as AlertTriangle, Circle as XCircle } from 'lucide-react-native';
-
+import { useRouter } from 'expo-router';
 const MaintenanceScreen = () => {
+
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -49,7 +51,7 @@ const MaintenanceScreen = () => {
         style={styles.header}
       >
         <Text style={styles.headerTitle}>Maintenance Requests</Text>
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity style={styles.addButton} onPress={()=>{router.push('/(screens)/maintenance')}}>
           <Plus size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
