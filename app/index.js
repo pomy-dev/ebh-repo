@@ -8,22 +8,6 @@ export default function LandingScreen() {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../assets/logo.png')}
-        style={styles.logo}
-      />
-
-      <View style={styles.iconsContainer}>
-        <View style={styles.iconWrapper}>
-          <Home size={36} color="#2563EB" />
-        </View>
-        <View style={styles.iconWrapper}>
-          <DollarSign size={36} color="#16A34A" />
-        </View>
-        <View style={styles.iconWrapper}>
-          <ClipboardList size={36} color="#8B5CF6" />
-        </View>
-      </View>
 
       <Text style={styles.title}>Welcome to Naku Ekhaya</Text>
 

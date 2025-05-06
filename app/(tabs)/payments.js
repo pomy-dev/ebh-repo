@@ -1,9 +1,38 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { CreditCard, DollarSign, Wallet, CalendarDays, FileText, ChevronRight } from 'lucide-react-native';
+import BottomSheetModal from '../../components/bottom-sheet';
 
 const PaymentsScreen = () => {
   const [activeMethod, setActiveMethod] = useState('card');
+  const [showSheet, setShowSheet] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState(null);
+
+  const renderForm = () => {
+    if (selectedMethod === 'card') {
+      return (
+        <View>
+          <TextInput placeholder="Card Number" style={styles.input} />
+          <TextInput placeholder="Expiry Date" style={styles.input} />
+          <TextInput placeholder="CVV" style={styles.input} secureTextEntry />
+        </View>
+      );
+    }
+    if (selectedMethod === 'paypal') {
+      return (
+        <View>
+          <TextInput placeholder="PayPal Email" style={styles.input} />
+        </View>
+      );
+    }
+    if (selectedMethod === 'cash') {
+      return <Text>No info needed. Pay with cash at delivery.</Text>;
+    }
+    return null;
+  };
+  const handleMethodSelect = (method) => {
+    setSelectedMethod(method);
+  };
 
   return (
     <View style={styles.container}>
@@ -27,20 +56,20 @@ const PaymentsScreen = () => {
             <Text style={styles.amountCents}>.00</Text>
           </View>
           <Text style={styles.dueDate}>Due on April 30, 2025</Text>
-          <TouchableOpacity style={styles.payButton}>
+          <TouchableOpacity style={styles.payButton} onPress={() => setShowSheet(true)}>
             <Text style={styles.payButtonText}>Pay Now</Text>
           </TouchableOpacity>
         </View>
 
-        <View>
-          <Text style={styles.sectionTitle}>Payment Methods</Text>
+        <BottomSheetModal visible={showSheet} onClose={() => { setShowSheet(false); setSelectedMethod(null); }}>
+          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Payment Methods</Text>
           <View style={styles.methodsContainer}>
             <TouchableOpacity
               style={[
                 styles.methodCard,
                 activeMethod === 'card' && styles.activeMethodCard
               ]}
-              onPress={() => setActiveMethod('card')}
+              onPress={() => handleMethodSelect('card')}
             >
               <CreditCard
                 size={24}
@@ -61,7 +90,7 @@ const PaymentsScreen = () => {
                 styles.methodCard,
                 activeMethod === 'bank' && styles.activeMethodCard
               ]}
-              onPress={() => setActiveMethod('bank')}
+              onPress={() => handleMethodSelect('bank')}
             >
               <Wallet
                 size={24}
@@ -82,7 +111,7 @@ const PaymentsScreen = () => {
                 styles.methodCard,
                 activeMethod === 'momo' && styles.activeMethodCard
               ]}
-              onPress={() => setActiveMethod('momo')}
+              onPress={() => handleMethodSelect('momo')}
             >
               <Image source={require('../../assets/momo.jpg')}
                 style={{ width: 30, height: 30 }}
@@ -102,7 +131,7 @@ const PaymentsScreen = () => {
                 styles.methodCard,
                 activeMethod === 'insta' && styles.activeMethodCard
               ]}
-              onPress={() => setActiveMethod('insta')}
+              onPress={() => handleMethodSelect('insta')}
             >
               <Image source={require('../../assets/instacash.png')}
                 style={{ width: 30, height: 30 }}
@@ -117,7 +146,10 @@ const PaymentsScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+          <View style={{ marginTop: 16 }}>
+            {renderForm()}
+          </View>
+        </BottomSheetModal>
 
         <View>
           <View style={styles.sectionHeader}>
@@ -394,6 +426,23 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#1F2937',
   },
+  button: {
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#eee',
+    marginTop: 8,
+  },
+  input: {
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    padding: 8,
+    marginTop: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  }
 });
 
 export default PaymentsScreen;
