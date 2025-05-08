@@ -1,37 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
-import { CreditCard, DollarSign, Wallet, CalendarDays, FileText, ChevronRight } from 'lucide-react-native';
+import { DollarSign, CalendarDays, FileText, ChevronRight } from 'lucide-react-native';
 import BottomSheetModal from '../../components/bottom-sheet';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 
 const PaymentsScreen = () => {
-  const [activeMethod, setActiveMethod] = useState('card');
   const [showSheet, setShowSheet] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(null);
+  const router = useRouter();
 
-  const renderForm = () => {
-    if (selectedMethod === 'card') {
-      return (
-        <View>
-          <TextInput placeholder="Card Number" style={styles.input} />
-          <TextInput placeholder="Expiry Date" style={styles.input} />
-          <TextInput placeholder="CVV" style={styles.input} secureTextEntry />
-        </View>
-      );
-    }
-    if (selectedMethod === 'paypal') {
-      return (
-        <View>
-          <TextInput placeholder="PayPal Email" style={styles.input} />
-        </View>
-      );
-    }
-    if (selectedMethod === 'cash') {
-      return <Text>No info needed. Pay with cash at delivery.</Text>;
-    }
-    return null;
-  };
   const handleMethodSelect = (method) => {
     setSelectedMethod(method);
+    router.push('./(screens)/startpayments');
   };
 
   return (
@@ -61,93 +42,62 @@ const PaymentsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <BottomSheetModal visible={showSheet} onClose={() => { setShowSheet(false); setSelectedMethod(null); }}>
+        <BottomSheetModal visible={showSheet} onClose={() => setShowSheet(false)}>
           <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Payment Methods</Text>
-          <View style={styles.methodsContainer}>
-            <TouchableOpacity
-              style={[
-                styles.methodCard,
-                activeMethod === 'card' && styles.activeMethodCard
-              ]}
+          <View style={styles.methodsContainer} >
+            <TouchableOpacity style={{ width: '100%' }}
               onPress={() => handleMethodSelect('card')}
             >
-              <CreditCard
-                size={24}
-                color={activeMethod === 'card' ? '#FFFFFF' : '#6B7280'}
-              />
-              <Text
-                style={[
-                  styles.methodText,
-                  activeMethod === 'card' && styles.activeMethodText
-                ]}
-              >
-                Credit Card
-              </Text>
+              <LinearGradient style={styles.methodCard} start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }} colors={['#f20707', '#f07b41']}>
+                <Image source={require('../../assets/credit-card.png')}
+                  style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 5 }}
+                />
+                <Text
+                  style={[
+                    styles.methodText
+                  ]}
+                >
+                  Credit Card
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.methodCard,
-                activeMethod === 'bank' && styles.activeMethodCard
-              ]}
-              onPress={() => handleMethodSelect('bank')}
-            >
-              <Wallet
-                size={24}
-                color={activeMethod === 'bank' ? '#FFFFFF' : '#6B7280'}
-              />
-              <Text
-                style={[
-                  styles.methodText,
-                  activeMethod === 'bank' && styles.activeMethodText
-                ]}
-              >
-                E-Wallet
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.methodCard,
-                activeMethod === 'momo' && styles.activeMethodCard
-              ]}
+            <TouchableOpacity style={{ width: '100%' }}
               onPress={() => handleMethodSelect('momo')}
             >
-              <Image source={require('../../assets/momo.jpg')}
-                style={{ width: 30, height: 30 }}
-              />
-              <Text
-                style={[
-                  styles.methodText,
-                  activeMethod === 'momo' && styles.activeMethodText
-                ]}
-              >
-                MoMo Pay
-              </Text>
+              <LinearGradient style={styles.methodCard} start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }} colors={['#111191', '#bfa904']}>
+                <Image source={require('../../assets/momo.jpg')}
+                  style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 5 }}
+                />
+                <Text
+                  style={[
+                    styles.methodText
+                  ]}
+                >
+                  MoMo Pay
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.methodCard,
-                activeMethod === 'insta' && styles.activeMethodCard
-              ]}
+            <TouchableOpacity style={{ width: '100%' }}
               onPress={() => handleMethodSelect('insta')}
             >
-              <Image source={require('../../assets/instacash.png')}
-                style={{ width: 30, height: 30 }}
-              />
-              <Text
-                style={[
-                  styles.methodText,
-                  activeMethod === 'insta' && styles.activeMethodText
-                ]}
-              >
-                Insta-Cash
-              </Text>
+              <LinearGradient style={styles.methodCard} start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }} colors={['#4f2f9c', '#f50505']}>
+                <Image source={require('../../assets/instacash.png')}
+                  style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 5 }}
+                />
+                <Text
+                  style={[
+                    styles.methodText
+                  ]}
+                >
+                  Insta-Cash
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
-          </View>
-          <View style={{ marginTop: 16 }}>
-            {renderForm()}
           </View>
         </BottomSheetModal>
 
@@ -314,33 +264,26 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   methodsContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 14,
+    justifyContent: 'space-evenly',
   },
   methodCard: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
+    width: '100%',
+    borderRadius: 50,
+    padding: 5,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    marginBottom: 15,
-  },
-  activeMethodCard: {
-    backgroundColor: '#4F46E5',
-    borderColor: '#4F46E5',
+    marginTop: 15,
   },
   methodText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
-    color: '#6B7280',
-    marginTop: 8,
-  },
-  activeMethodText: {
     color: '#FFFFFF',
+    marginTop: 8,
   },
   sectionHeader: {
     flexDirection: 'row',
