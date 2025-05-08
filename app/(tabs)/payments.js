@@ -6,32 +6,155 @@ import BottomSheetModal from '../../components/bottom-sheet';
 const PaymentsScreen = () => {
   const [activeMethod, setActiveMethod] = useState('card');
   const [showSheet, setShowSheet] = useState(false);
+  const [showSheet2, setShowSheet2] = useState(false);
+  const [showSheet3, setShowSheet3] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(null);
 
   const renderForm = () => {
     if (selectedMethod === 'card') {
       return (
-        <View>
-          <TextInput placeholder="Card Number" style={styles.input} />
-          <TextInput placeholder="Expiry Date" style={styles.input} />
-          <TextInput placeholder="CVV" style={styles.input} secureTextEntry />
+        <View style={styles.container}>
+          <Text style={styles.label}> Your Card Details</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Card Number</Text>
+          <TextInput 
+            placeholder="Enter your card number" 
+            style={styles.input} 
+            placeholderTextColor="#6B7280"
+          />
         </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Expiry Date</Text>
+          <TextInput 
+            placeholder="MM/YY" 
+            style={styles.input} 
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>CVV</Text>
+          <TextInput 
+            placeholder="Enter CVV" 
+            style={styles.input} 
+            secureTextEntry 
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+      
+        <TouchableOpacity onPress={()=> setShowSheet2(false)} style={styles.payButton}>
+          <Text style={styles.payButtonText}>Submit Payment</Text>
+        </TouchableOpacity>
+      </View>
       );
     }
-    if (selectedMethod === 'paypal') {
+    if (selectedMethod === 'momo') {
       return (
-        <View>
-          <TextInput placeholder="PayPal Email" style={styles.input} />
-        </View>
+        <View style={styles.container}>
+        <Text style={styles.label}> Your {selectedMethod} Details</Text>
+      
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Phone Number</Text>
+        <TextInput 
+          placeholder="+268" 
+          style={styles.input} 
+          placeholderTextColor="#6B7280"
+        />
+      </View>
+      
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Amount</Text>
+        <TextInput 
+          placeholder="Enter Amount" 
+          style={styles.input} 
+          secureTextEntry 
+          placeholderTextColor="#6B7280"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Reference</Text>
+        <TextInput 
+          placeholder="Enter referance" 
+          style={styles.input} 
+          placeholderTextColor="#6B7280"
+        />
+      </View>
+    
+      <TouchableOpacity onPress={()=> setShowSheet2(false)} style={styles.payButton}>
+        <Text style={styles.payButtonText}>Submit Payment</Text>
+      </TouchableOpacity>
+    </View>
+      );
+    }
+    if (selectedMethod === 'insta') {
+      return (
+        <View style={styles.container}>
+        <Text style={styles.label}> Your {selectedMethod} Details</Text>
+      
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Phone Number</Text>
+        <TextInput 
+          placeholder="+268" 
+          style={styles.input} 
+          placeholderTextColor="#6B7280"
+        />
+      </View>
+      
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Amount</Text>
+        <TextInput 
+          placeholder="Enter Amount" 
+          style={styles.input} 
+          secureTextEntry 
+          placeholderTextColor="#6B7280"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Reference</Text>
+        <TextInput 
+          placeholder="Enter referance" 
+          style={styles.input} 
+          placeholderTextColor="#6B7280"
+        />
+      </View>
+    
+      <TouchableOpacity onPress={()=> setShowSheet2(false)} style={styles.payButton}>
+        <Text style={styles.payButtonText}>Submit Payment</Text>
+      </TouchableOpacity>
+    </View>
+      );
+    }
+    if (selectedMethod === 'confirm') {
+      return (
+        <View style={styles.container}>
+        
+      <View style={styles.inputContainer}>
+      <Text style={styles.label}>You are paying: {'/n /n'}</Text>
+      <Text style={styles.label}>Amount : E234</Text>
+      <Text style={styles.label}>Cell : 7823429</Text>
+      <Text style={styles.label}>Reference : Flat 2342/B</Text>
+      <Text >***please nofund for mis directed Transaaction***</Text>
+      </View>
+          
+      <TouchableOpacity onPress={()=> setShowSheet2(false)} style={styles.payButton}>
+        <Text style={styles.payButtonText}>Submit Payment</Text>
+      </TouchableOpacity>
+    </View>
       );
     }
     if (selectedMethod === 'cash') {
       return <Text>No info needed. Pay with cash at delivery.</Text>;
     }
-    return null;
+    
+    return <Text>No info needed. Pay with cash at delivery</Text>;
   };
   const handleMethodSelect = (method) => {
-    setSelectedMethod(method);
+    setShowSheet(false);
+    setShowSheet2(true);
+    setSelectedMethod(method);     
   };
 
   return (
@@ -61,7 +184,7 @@ const PaymentsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <BottomSheetModal visible={showSheet} onClose={() => { setShowSheet(false); setSelectedMethod(null); }}>
+        <BottomSheetModal visible={showSheet} onClose={() => { setShowSheet(false);}}>
           <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Payment Methods</Text>
           <View style={styles.methodsContainer}>
             <TouchableOpacity
@@ -146,10 +269,16 @@ const PaymentsScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{ marginTop: 16 }}>
-            {renderForm()}
-          </View>
+     
         </BottomSheetModal>
+
+        <BottomSheetModal visible={showSheet2} onClose={() => { setShowSheet2(false);}}>
+          <ScrollView>
+          {renderForm()}
+          </ScrollView>
+        
+        </BottomSheetModal>
+
 
         <View>
           <View style={styles.sectionHeader}>
@@ -228,6 +357,35 @@ const PaymentsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  //payform
+  inputContainer: {
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1F2937',
+    marginBottom: 4,
+  },
+  payButton: {
+    backgroundColor: '#4F46E5',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  payButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  //endform
+
   container: {
     flex: 1,
     backgroundColor: '#F9FAFB',
