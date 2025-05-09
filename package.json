@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.1.4",
-    "@react-native-community/datetimepicker": "^8.3.0",
     "axios": "^1.8.4",
     "expo": "~52.0.46",
     "expo-file-system": "^18.1.9",
