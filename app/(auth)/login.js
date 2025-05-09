@@ -102,7 +102,7 @@ export default function Login() {
 
           <TouchableOpacity style={styles.button} disabled={loading} onPress={handleLogin}>
             {loading ?
-              (<ActivityIndicator size={30} color='#FFFFFFF' />)
+              (<ActivityIndicator size={30} color='#ffffff' />)
               : (<Text style={styles.buttonText}>Sign In</Text>)}
           </TouchableOpacity>
         </View>
