@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { DollarSign, CalendarDays, FileText, ChevronRight } from 'lucide-react-native';
 import BottomSheetModal from '../../components/bottom-sheet';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,7 +12,6 @@ const PaymentsScreen = () => {
 
   const handleMethodSelect = (method) => {
     setSelectedMethod(method);
-    router.push('./(screens)/startpayments');
   };
 
   return (

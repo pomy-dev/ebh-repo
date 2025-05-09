@@ -12,7 +12,7 @@ import {
     Alert
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, PlusCircle, Camera, Image as ImageIcon, X, Send } from 'lucide-react-native';
+import { ArrowLeft, Camera, Image as ImageIcon, X, Send } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 const generateId = () => `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
@@ -202,7 +202,7 @@ const Maintenance = () => {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                        <ArrowLeft size={24} color="#4F46E5" />
+                        <ArrowLeft size={24} color="#0a0a0a" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Maintenance Request</Text>
                 </View>
