@@ -7,11 +7,169 @@ import { useRouter } from 'expo-router';
 
 const PaymentsScreen = () => {
   const [showSheet, setShowSheet] = useState(false);
+  const [showSheet2, setShowSheet2] = useState(false);
+  const [showSheet3, setShowSheet3] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(null);
   const router = useRouter();
 
+  const renderForm = () => {
+    if (selectedMethod === 'card') {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.label}> Your Card Details</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Card Number</Text>
+          <TextInput 
+            placeholder="Enter your card number" 
+            style={styles.input} 
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Expiry Date</Text>
+          <TextInput 
+            placeholder="MM/YY" 
+            style={styles.input} 
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>CVV</Text>
+          <TextInput 
+            placeholder="Enter CVV" 
+            style={styles.input} 
+            secureTextEntry 
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+      
+        <TouchableOpacity onPress={()=>{setSelectedMethod('confirm'); setShowSheet3(true);}} style={styles.payButton}>
+        <Text style={styles.payButtonText}>Submit Payment</Text>
+      </TouchableOpacity>
+      </View>
+      );
+    }
+    if (selectedMethod === 'momo') {
+      return (
+        <View style={styles.container}>
+        <View style={styles.header2}>
+          <Image source={require('../../assets/momo.jpg')} style={styles.logo} />
+          <Text style={styles.headerText}>{selectedMethod} Details</Text>
+        </View>
+      
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Phone Number</Text>
+          <TextInput 
+            placeholder="+268" 
+            style={styles.input} 
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+      
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Amount</Text>
+          <TextInput 
+            placeholder="Enter Amount" 
+            style={styles.input} 
+            keyboardType="numeric"
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+      
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Reference</Text>
+          <TextInput 
+            placeholder="Enter reference" 
+            style={styles.input} 
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+      
+        <TouchableOpacity 
+          onPress={() => { setSelectedMethod('confirm'); setShowSheet3(true); }} 
+          style={styles.payButton}
+        >
+          <Text style={styles.payButtonText}>Submit Payment</Text>
+        </TouchableOpacity>
+      </View>
+      );
+    }
+    if (selectedMethod === 'insta') {
+      return (
+        <View style={styles.container}>
+        <View style={styles.header2}>
+          <Image source={require('../../assets/instacash.png')} style={styles.logo} />
+          <Text style={styles.headerText}>{selectedMethod} Details</Text>
+        </View>
+      
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Phone Number</Text>
+          <TextInput 
+            placeholder="+268" 
+            style={styles.input} 
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+      
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Amount</Text>
+          <TextInput 
+            placeholder="Enter Amount" 
+            style={styles.input} 
+            keyboardType="numeric"
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+      
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Reference</Text>
+          <TextInput 
+            placeholder="Enter reference" 
+            style={styles.input} 
+            placeholderTextColor="#6B7280"
+          />
+        </View>
+      
+        <TouchableOpacity 
+          onPress={() => { setSelectedMethod('confirm'); setShowSheet3(true); }} 
+          style={styles.payButton}
+        >
+          <Text style={styles.payButtonText}>Submit Payment</Text>
+        </TouchableOpacity>
+      </View>
+      );
+    }
+    if (selectedMethod === 'confirm') {
+      return (
+<View style={[styles.container, { justifyContent: 'center' }]}>
+  <View style={styles.inputContainer}>
+    <Text style={styles.label}>You are paying:</Text>
+    <Text style={styles.label}>Amount: E234</Text>
+    <Text style={styles.label}>Cell: 7823429</Text>
+    <Text style={styles.label}>Reference: Flat 2342/B</Text>
+    <Text style={{ fontSize: 11, textAlign: 'center' }}>
+      ***please note no fund for misdirected transaction***
+    </Text>
+  </View>
+
+  <TouchableOpacity onPress={() => setShowSheet2(false)} style={styles.payButton}>
+    <Text style={styles.payButtonText}>Submit Payment</Text>
+  </TouchableOpacity>
+</View>
+      );
+    }
+    if (selectedMethod === 'cash') {
+      return <Text>No info needed. Pay with cash at delivery.</Text>;
+    }
+    
+    return <Text>No info needed. Pay with cash at delivery</Text>;
+  };
   const handleMethodSelect = (method) => {
-    setSelectedMethod(method);
+    setShowSheet(false);
+    setShowSheet2(true);
+    setSelectedMethod(method);     
   };
 
   return (
@@ -41,7 +199,7 @@ const PaymentsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <BottomSheetModal visible={showSheet} onClose={() => setShowSheet(false)}>
+        <BottomSheetModal visible={showSheet} onClose={() => { setShowSheet(false);}}>
           <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Payment Methods</Text>
           <View style={styles.methodsContainer} >
             <TouchableOpacity style={{ width: '100%' }}
@@ -98,7 +256,16 @@ const PaymentsScreen = () => {
               </LinearGradient>
             </TouchableOpacity>
           </View>
+     
         </BottomSheetModal>
+
+        <BottomSheetModal visible={showSheet2} onClose={() => { setShowSheet2(false);}}>
+          <ScrollView>
+          {renderForm()}
+          </ScrollView>
+        
+        </BottomSheetModal>
+
 
         <View>
           <View style={styles.sectionHeader}>
@@ -177,6 +344,51 @@ const PaymentsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  //payform
+  header2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginLeft: 8, // Space between logo and text
+  },
+  logo: {
+    width: 30,
+    height: 30,
+    marginHorizontal: 5,
+  },
+  inputContainer: {
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1F2937',
+    marginBottom: 4,
+  },
+  payButton: {
+    backgroundColor: '#4F46E5',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  payButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  //endform
+
   container: {
     flex: 1,
     backgroundColor: '#F9FAFB',
