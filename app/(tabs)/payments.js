@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { DollarSign, CalendarDays, FileText, ChevronRight } from 'lucide-react-native';
 import BottomSheetModal from '../../components/bottom-sheet';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 
 const PaymentsScreen = () => {
@@ -46,7 +45,7 @@ const PaymentsScreen = () => {
           </View>
 
           <TouchableOpacity onPress={() => { setSelectedMethod('confirm'); setShowSheet3(true); }} style={styles.payButton}>
-            <Text style={styles.payButtonText}>Submit Payment</Text>
+            <Text style={styles.payButtonText}>Send</Text>
           </TouchableOpacity>
         </View>
       );
