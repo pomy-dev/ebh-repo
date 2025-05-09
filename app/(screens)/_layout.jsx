@@ -10,6 +10,13 @@ export default function AuthLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="startpayments"
+        options={{
+          title: "Process Payments",
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }
