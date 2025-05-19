@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'expo-router';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Switch } from 'react-native';
 import { useAuth } from '../../context/app-state/auth-context';
-import Icon from '@expo/vector-icons';
+import { Icons } from '../../constant/icons';
 
 const SettingsScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
@@ -55,41 +55,41 @@ const SettingsScreen = () => {
           <TouchableOpacity style={styles.menuItem}>
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#EEF2FF' }]}>
-                <Icon name='user' size={20} color="#4F46E5" />
+                <Icons.EvilIcons name='user' size={20} color="#4F46E5" />
               </View>
               <Text style={styles.menuItemText}>Personal Information</Text>
             </View>
-            <Icon name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#FEF2F2' }]}>
-                <Icon name='creditcard' size={20} color="#DC2626" />
+                <Icons.AntDesign name='creditcard' size={20} color="#DC2626" />
               </View>
               <Text style={styles.menuItemText}>Payment Methods</Text>
             </View>
-            <Icon name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#F0FDF4' }]}>
-                <Icon name='home' size={20} color="#16A34A" />
+                <Icons.FontAwesome name='home' size={20} color="#16A34A" />
               </View>
               <Text style={styles.menuItemText}>Property Details</Text>
             </View>
-            <Icon name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#F5F3FF' }]}>
-                <Icon name='lock1' size={20} color="#8B5CF6" />
+                <Icons.Feather name='lock' size={20} color="#8B5CF6" />
               </View>
               <Text style={styles.menuItemText}>Security Settings</Text>
             </View>
-            <Icon name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
           </TouchableOpacity>
         </View>
 
@@ -100,7 +100,7 @@ const SettingsScreen = () => {
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#FEF3C7' }]}>
-                <Icon name='bells' size={20} color="#D97706" />
+                <Icons.AntDesign name='bells' size={20} color="#D97706" />
               </View>
               <Text style={styles.menuItemText}>Push Notifications</Text>
             </View>
@@ -115,7 +115,7 @@ const SettingsScreen = () => {
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#DBEAFE' }]}>
-                <Icon name='mail-outline' size={20} color="#2563EB" />
+                <Icons.Ionicons name='mail-outline' size={20} color="#2563EB" />
               </View>
               <Text style={styles.menuItemText}>Email Alerts</Text>
             </View>
@@ -130,7 +130,7 @@ const SettingsScreen = () => {
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#E0E7FF' }]}>
-                <Icon name='mone-outline' size={20} color="#4F46E5" />
+                <Icons.Ionicons name='moon-outline' size={20} color="#4F46E5" />
               </View>
               <Text style={styles.menuItemText}>Dark Mode</Text>
             </View>
@@ -150,11 +150,11 @@ const SettingsScreen = () => {
           <TouchableOpacity style={styles.menuItem}>
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#F0FDF4' }]}>
-                <Icon name='help-outline' size={20} color="#16A34A" />
+                <Icons.Ionicons name='help-outline' size={20} color="#16A34A" />
               </View>
               <Text style={styles.menuItemText}>Help Center</Text>
             </View>
-            <Icon name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}
@@ -162,7 +162,7 @@ const SettingsScreen = () => {
           >
             <View style={styles.menuItemLeft}>
               <View style={[styles.menuItemIcon, { backgroundColor: '#FEF2F2' }]}>
-                <Icon name='logout' size={20} color="#DC2626" />
+                <Icons.AntDesign name='logout' size={20} color="#DC2626" />
               </View>
               <Text style={[styles.menuItemText, { color: '#DC2626' }]}>Log Out</Text>
             </View>
