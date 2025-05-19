@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/app-state/auth-context';
-import { Icons } from '../../constant/icons'; // Import Ionicons instead of Icon
+import { Icons } from '../../constant/icons';
 
 const Login = () => {
   const router = useRouter();
@@ -68,7 +68,7 @@ const Login = () => {
           </View>
 
           <View style={styles.inputContainer}>
-            <Icons.Ionicons name="lock-closed-outline" size={20} color="#6B7280" style={styles.inputIcon} /> {/* Use Ionicons */}
+            <Icons.Ionicons name="lock-closed-outline" size={20} color="#6B7280" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
               placeholder="Password"
@@ -81,9 +81,9 @@ const Login = () => {
               style={styles.eyeIcon}
             >
               {showPassword ? (
-                <Icons.Ionicons name="eye-off-outline" size={20} color="#6B7280" /> /* Use Ionicons */
+                <Icons.Ionicons name="eye-off-outline" size={20} color="#6B7280" />
               ) : (
-                <Icons.Ionicons name="eye-outline" size={20} color="#6B7280" /> /* Fix typo: eyeo -> eye-outline */
+                <Icons.Ionicons name="eye-outline" size={20} color="#6B7280" />
               )}
             </TouchableOpacity>
           </View>

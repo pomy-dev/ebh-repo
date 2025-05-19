@@ -80,13 +80,19 @@ const Maintenance = () => {
                 allowsEditing: false,
                 aspect: [4, 3],
                 quality: 0.8,
+                allowsEditing: false,
+                allowsMultipleSelection: true,
             });
 
             if (!result.canceled && result.assets && result.assets.length > 0) {
                 result.assets.forEach(asset => {
                     handleImageSelected(asset);
                 });
+                const uris = result.assets.map((asset) => ({ uri: asset.uri }));
+                console.log('Picked URIs:', uris);
+                return uris;
             }
+            return [];
         } catch (error) {
             console.error('Error picking image:', error);
             setError('Failed to select image. Please try again.');
@@ -121,7 +127,6 @@ const Maintenance = () => {
 
     // Submit the form
     const handleSubmit = async () => {
-
         // Basic validation
         if (!title.trim()) {
             setError('Title is required');
@@ -149,10 +154,14 @@ const Maintenance = () => {
             }
 
             const userId = authState.user.id;
+            console.log('User Loggin UUID:', userId)
 
-            const imageUrls = await uploadMultipleImages(images.map(image => image.localPath))
-
-            const submitData = { user_id: userId, case_title: title, description, files_url: imageUrls }
+            const imageResults = await uploadMultipleImages(images.map(image => image));
+            const files_url = imageResults.map(result => result.url);
+            files_url.forEach((url, index) => {
+                console.log(`Image [${index}] => ${url}`)
+            })
+            const submitData = { user_id: userId, case_title: title, description, files_url };
 
             const data = await request_maintenance(submitData);
 
