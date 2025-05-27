@@ -10,6 +10,13 @@ export default function AuthLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="paymentDetailScreen"
+        options={{
+          title: "Payments Detail",
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

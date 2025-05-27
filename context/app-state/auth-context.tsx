@@ -21,6 +21,10 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({ token: null, authenticated: null, user: null });
+  const [paymentData, setPaymentData] = useState(null);
+
+
+  
 
   // 👇 Restore user session on app startup
   const loadUser = async () => {

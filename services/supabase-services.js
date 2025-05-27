@@ -50,6 +50,13 @@ export async function getUserIdByEmail(email) {
 /**
  * Inserts a new maintenance request into the "Maintenance" table.
  */
+
+
+/**
+ * Inserts a new maintenance request into the "Maintenance" table.
+ */
+
+
 export async function request_maintenance({
   user_id,
   case_title,
@@ -129,5 +136,4 @@ async function uploadImage(fileUri) {
     throw error;
   }
 }
-
 

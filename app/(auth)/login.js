@@ -81,9 +81,9 @@ const Login = () => {
               style={styles.eyeIcon}
             >
               {showPassword ? (
-                <Icons.Ionicons name="eye-off-outline" size={20} color="#6B7280" /> /* Use Ionicons */
+                <Icons.Ionicons name="eye-off-outline" size={20} color="#6B7280" /> 
               ) : (
-                <Icons.Ionicons name="eye-outline" size={20} color="#6B7280" /> /* Fix typo: eyeo -> eye-outline */
+                <Icons.Ionicons name="eye-outline" size={20} color="#6B7280" /> 
               )}
             </TouchableOpacity>
           </View>
