@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabase-client';
 
 interface AuthProps {
-  authState?: { token: string | null; authenticated: boolean | null; user?: { name: string; email: string; user_number?: number | null } };
+  authState?: { token: string | null; authenticated: boolean | null; user?: { id: string, name: string; email: string; user_number?: number | null } };
   onRegister?: (name: string, email: string, user_number: number, password1: string, password2: string) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
@@ -19,8 +19,8 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState({ token: null, authenticated: null, user: null });
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [authState, setAuthState] = useState<{ token: string | null; authenticated: boolean | null; user?: { id: string; name: string; email: string; user_number?: number | null } }>({ token: null, authenticated: null, user: undefined });
   const [paymentData, setPaymentData] = useState(null);
 
 
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
 
       const { data: userRow, error } = await supabase
         .from('users')
-        .select('name, email, user_number')
+        .select('id, name, email, user_number')
         .eq('id', decoded.sub)
         .single();
 
@@ -46,9 +46,10 @@ export const AuthProvider = ({ children }) => {
           token,
           authenticated: true,
           user: {
-            name: userRow.name,
-            email: userRow.email,
-            user_number: userRow.user_number,
+            id: userRow.id || decoded.sub,
+            name: userRow.name || null,
+            email: userRow.email || null,
+            user_number: userRow.user_number || null,
           },
         });
       }
@@ -109,7 +110,7 @@ export const AuthProvider = ({ children }) => {
 
       const { data: userRow } = await supabase
         .from('users')
-        .select('name, email, user_number')
+        .select('id, name, email, user_number')
         .eq('id', decoded.sub)
         .single();
 
@@ -117,6 +118,7 @@ export const AuthProvider = ({ children }) => {
         token,
         authenticated: true,
         user: {
+          id: userRow?.id || decoded.sub || '',
           name: userRow?.name || '',
           email,
           user_number: userRow?.user_number || '',
@@ -133,13 +135,13 @@ export const AuthProvider = ({ children }) => {
     try {
       await supabase.auth.signOut();
       await SecureStore.deleteItemAsync(TOKEN_KEY);
-      setAuthState({ token: null, authenticated: false, user: null });
+      setAuthState({ token: null, authenticated: false, user: undefined });
     } catch (err) {
       console.error('Logout failed', err);
     }
   };
 
-  const updateUser = async (name: string, email: string) => {
+  const updateUser = async (name: string | null, email: string | null) => {
     try {
       // const res = await axios.put(`${API_URL}/users/update`, { name, email });
       // return res.data;
@@ -157,8 +159,6 @@ export const AuthProvider = ({ children }) => {
     onUpdateUser: updateUser,
   };
 
-
-
   useEffect(() => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
@@ -167,7 +167,7 @@ export const AuthProvider = ({ children }) => {
           const decoded: any = jwtDecode(token);
           const { data: userRow } = await supabase
             .from('users')
-            .select('name, email, user_number')
+            .select('id, name, email, user_number')
             .eq('id', decoded.sub)
             .single();
 
@@ -176,6 +176,7 @@ export const AuthProvider = ({ children }) => {
               token,
               authenticated: true,
               user: {
+                id: userRow.id,
                 name: userRow.name,
                 email: userRow.email,
                 user_number: userRow.user_number
@@ -190,7 +191,6 @@ export const AuthProvider = ({ children }) => {
     loadUser();
     loadToken();
   }, []);
-
 
   return (
     <AuthContext.Provider value={value}>
