@@ -1,8 +1,16 @@
-import React from 'react';
-import { useRouter } from 'expo-router';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Switch } from 'react-native';
-import { useAuth } from '../../context/app-state/auth-context';
-import { Icons } from '../../constant/icons';
+import React from "react";
+import { useRouter } from "expo-router";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Switch,
+} from "react-native";
+import { useAuth } from "../../context/app-state/auth-context";
+import { Icons } from "../../constant/icons";
 
 const SettingsScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
@@ -12,19 +20,19 @@ const SettingsScreen = () => {
   const router = useRouter();
 
   const handleLogout = () => {
-    onLogout().then(() => {
-      console.log('Logged out!')
-      router.replace('/(auth)/login');
-    }).catch((error) => {
-      console.error('Logout failed:', error);
-    })
-  }
+    onLogout()
+      .then(() => {
+        console.log("Logged out!");
+        router.replace("/(auth)/login");
+      })
+      .catch((error) => {
+        console.error("Logout failed:", error);
+      });
+  };
 
   return (
     <View style={styles.container}>
-      <View
-        style={styles.header}
-      >
+      <View style={styles.header}>
         <Text style={styles.headerTitle}>Settings</Text>
       </View>
 
@@ -32,139 +40,196 @@ const SettingsScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View
-          style={styles.profileSection}
-        >
+        <View style={styles.profileSection}>
           <Image
-            source={require('../../assets/pomy.png')}
+            source={require("../../assets/pomy.png")}
             style={styles.profileImage}
           />
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>Pomy Nxumalo</Text>
             <Text style={styles.profileEmail}>pomy.nxumalo@gmail.com</Text>
           </View>
-          <TouchableOpacity style={styles.editButton}>
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: "/(screens)/PersonalInfoScreen",
+              });
+            }}
+            style={styles.editButton}
+          >
             <Text style={styles.editButtonText}>Edit</Text>
           </TouchableOpacity>
         </View>
 
-        <View
-        >
+        <View>
           <Text style={styles.sectionTitle}>Account</Text>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: "/(screens)/PersonalInfoScreen",
+              });
+            }}
+            style={styles.menuItem}
+          >
             <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: '#EEF2FF' }]}>
-                <Icons.EvilIcons name='user' size={20} color="#4F46E5" />
+              <View
+                style={[styles.menuItemIcon, { backgroundColor: "#EEF2FF" }]}
+              >
+                <Icons.EvilIcons name="user" size={20} color="#4F46E5" />
               </View>
               <Text style={styles.menuItemText}>Personal Information</Text>
             </View>
-            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: "/(screens)/PaymentMethodsScreen",
+              });
+            }}
+            style={styles.menuItem}
+          >
             <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: '#FEF2F2' }]}>
-                <Icons.AntDesign name='creditcard' size={20} color="#DC2626" />
+              <View
+                style={[styles.menuItemIcon, { backgroundColor: "#FEF2F2" }]}
+              >
+                <Icons.AntDesign name="creditcard" size={20} color="#DC2626" />
               </View>
               <Text style={styles.menuItemText}>Payment Methods</Text>
             </View>
-            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: "/(screens)/PropertyDetailsScreen",
+              });
+            }}
+            style={styles.menuItem}
+          >
             <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: '#F0FDF4' }]}>
-                <Icons.FontAwesome name='home' size={20} color="#16A34A" />
+              <View
+                style={[styles.menuItemIcon, { backgroundColor: "#F0FDF4" }]}
+              >
+                <Icons.FontAwesome name="home" size={20} color="#16A34A" />
               </View>
               <Text style={styles.menuItemText}>Property Details</Text>
             </View>
-            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: "/(screens)/SecuritySettingsScreen",
+              });
+            }}
+            style={styles.menuItem}
+          >
             <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: '#F5F3FF' }]}>
-                <Icons.Feather name='lock' size={20} color="#8B5CF6" />
+              <View
+                style={[styles.menuItemIcon, { backgroundColor: "#F5F3FF" }]}
+              >
+                <Icons.Feather name="lock" size={20} color="#8B5CF6" />
               </View>
               <Text style={styles.menuItemText}>Security Settings</Text>
             </View>
-            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
           </TouchableOpacity>
         </View>
 
-        <View
-        >
-          <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Preferences</Text>
+        <View>
+          <Text style={[styles.sectionTitle, { marginTop: 24 }]}>
+            Preferences
+          </Text>
 
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: '#FEF3C7' }]}>
-                <Icons.AntDesign name='bells' size={20} color="#D97706" />
+              <View
+                style={[styles.menuItemIcon, { backgroundColor: "#FEF3C7" }]}
+              >
+                <Icons.AntDesign name="bells" size={20} color="#D97706" />
               </View>
               <Text style={styles.menuItemText}>Push Notifications</Text>
             </View>
             <Switch
               value={notificationsEnabled}
               onValueChange={setNotificationsEnabled}
-              trackColor={{ false: '#E5E7EB', true: '#4F46E5' }}
+              trackColor={{ false: "#E5E7EB", true: "#4F46E5" }}
               thumbColor="#FFFFFF"
             />
           </View>
 
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: '#DBEAFE' }]}>
-                <Icons.Ionicons name='mail-outline' size={20} color="#2563EB" />
+              <View
+                style={[styles.menuItemIcon, { backgroundColor: "#DBEAFE" }]}
+              >
+                <Icons.Ionicons name="mail-outline" size={20} color="#2563EB" />
               </View>
               <Text style={styles.menuItemText}>Email Alerts</Text>
             </View>
             <Switch
               value={emailAlertsEnabled}
               onValueChange={setEmailAlertsEnabled}
-              trackColor={{ false: '#E5E7EB', true: '#4F46E5' }}
+              trackColor={{ false: "#E5E7EB", true: "#4F46E5" }}
               thumbColor="#FFFFFF"
             />
           </View>
 
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: '#E0E7FF' }]}>
-                <Icons.Ionicons name='moon-outline' size={20} color="#4F46E5" />
+              <View
+                style={[styles.menuItemIcon, { backgroundColor: "#E0E7FF" }]}
+              >
+                <Icons.Ionicons name="moon-outline" size={20} color="#4F46E5" />
               </View>
               <Text style={styles.menuItemText}>Dark Mode</Text>
             </View>
             <Switch
               value={darkModeEnabled}
               onValueChange={setDarkModeEnabled}
-              trackColor={{ false: '#E5E7EB', true: '#4F46E5' }}
+              trackColor={{ false: "#E5E7EB", true: "#4F46E5" }}
               thumbColor="#FFFFFF"
             />
           </View>
         </View>
 
-        <View
-        >
+        <View>
           <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Support</Text>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: "/(screens)/HelpCenterScreen",
+              });
+            }}
+            style={styles.menuItem}
+          >
             <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: '#F0FDF4' }]}>
-                <Icons.Ionicons name='help-outline' size={20} color="#16A34A" />
+              <View
+                style={[styles.menuItemIcon, { backgroundColor: "#F0FDF4" }]}
+              >
+                <Icons.Ionicons name="help-outline" size={20} color="#16A34A" />
               </View>
               <Text style={styles.menuItemText}>Help Center</Text>
             </View>
-            <Icons.Ionicons name='chevron-forward' size={20} color="#9CA3AF" />
+            <Icons.Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}
-            onPress={handleLogout}
-          >
+          <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
             <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: '#FEF2F2' }]}>
-                <Icons.AntDesign name='logout' size={20} color="#DC2626" />
+              <View
+                style={[styles.menuItemIcon, { backgroundColor: "#FEF2F2" }]}
+              >
+                <Icons.AntDesign name="logout" size={20} color="#DC2626" />
               </View>
-              <Text style={[styles.menuItemText, { color: '#DC2626' }]}>Log Out</Text>
+              <Text style={[styles.menuItemText, { color: "#DC2626" }]}>
+                Log Out
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -180,34 +245,34 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
   },
   header: {
     paddingHorizontal: 24,
     paddingTop: 60,
     paddingBottom: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: "#F3F4F6",
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: "bold",
+    color: "#1F2937",
   },
   scrollContent: {
     padding: 16,
     paddingBottom: 40,
   },
   profileSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 16,
     marginBottom: 24,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -223,83 +288,83 @@ const styles = StyleSheet.create({
   },
   profileName: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: "bold",
+    color: "#1F2937",
     marginBottom: 4,
   },
   profileEmail: {
     fontSize: 14,
-    color: '#6B7280',
+    color: "#6B7280",
   },
   editButton: {
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#4F46E5',
+    borderColor: "#4F46E5",
   },
   editButtonText: {
-    color: '#4F46E5',
+    color: "#4F46E5",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: "bold",
+    color: "#1F2937",
     marginBottom: 16,
   },
   menuItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     elevation: 1,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
   },
   menuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   menuItemIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12,
   },
   menuItemText: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#1F2937',
+    fontWeight: "500",
+    color: "#1F2937",
   },
   toggleItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     elevation: 1,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
   },
   versionContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 24,
   },
   versionText: {
-    color: '#9CA3AF',
+    color: "#9CA3AF",
     fontSize: 14,
   },
 });
