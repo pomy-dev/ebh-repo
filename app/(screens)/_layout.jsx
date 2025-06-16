@@ -10,6 +10,13 @@ export default function AuthLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="properties"
+        options={{
+          title: "Find Your Home",
+          headerShown: false
+        }}
+      />
     </Stack>
   );
 }
