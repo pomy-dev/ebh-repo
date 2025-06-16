@@ -98,11 +98,11 @@ const HomeScreen = () => {
               <Text style={styles.actionText}>Maintenance</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionCard}>
+            <TouchableOpacity style={styles.actionCard} onPress={() => router.push('/(screens)/properties')}>
               <View style={[styles.actionIcon, { backgroundColor: '#F5F3FF' }]}>
                 <Icons.MaterialIcons name='other-houses' size={24} color="#8B5CF6" />
               </View>
-              <Text style={styles.actionText}>Amenities</Text>
+              <Text style={styles.actionText}>Houses</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.actionCard}

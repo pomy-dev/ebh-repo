@@ -29,7 +29,13 @@ const Login = () => {
     } else {
       console.log(result || 'Login successful!');
       setLoading(false);
-      router.push('/(tabs)');
+      // Check if user has an apartment assigned
+      // const { authState } = useAuth();
+      if (result?.user?.apartment_id) {
+        router.push('/(tabs)');
+      } else {
+        router.push('/(screens)/properties');
+      }
     }
   };
 

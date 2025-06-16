@@ -20,11 +20,11 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [authState, setAuthState] = useState<{ token: string | null; authenticated: boolean | null; user?: { id: string; name: string; email: string; user_number?: number | null } }>({ token: null, authenticated: null, user: undefined });
+  const [authState, setAuthState] = useState<{ token: string | null; authenticated: boolean | null; user?: { id: string; name: string; email: string; user_number?: number | null, apartment_id?: string | null } }>({ token: null, authenticated: null, user: undefined });
   const [paymentData, setPaymentData] = useState(null);
 
 
-  
+
 
   // 👇 Restore user session on app startup
   const loadUser = async () => {
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const { data: userRow, error } = await supabase
         .from('users')
-        .select('id, name, email, user_number')
+        .select('id, name, email, user_number, apartment_id')
         .eq('id', decoded.sub)
         .single();
 
@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             name: userRow.name || null,
             email: userRow.email || null,
             user_number: userRow.user_number || null,
+            apartment_id: userRow.apartment_id || null
           },
         });
       }
@@ -74,7 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const { error: insertError } = await supabase
           .from('users')
-          .insert([{ id: userId, name, email, user_number }]);
+          .insert([{ id: userId, name, email, user_number, apartment_id: null }]);
 
         if (insertError) {
           console.error('Error inserting user:', insertError.message)
@@ -110,7 +111,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const { data: userRow } = await supabase
         .from('users')
-        .select('id, name, email, user_number')
+        .select('id, name, email, user_number, apartment_id')
         .eq('id', decoded.sub)
         .single();
 
@@ -122,6 +123,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           name: userRow?.name || '',
           email,
           user_number: userRow?.user_number || '',
+          apartment_id: userRow?.apartment_id || null
         },
       });
 
@@ -167,7 +169,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const decoded: any = jwtDecode(token);
           const { data: userRow } = await supabase
             .from('users')
-            .select('id, name, email, user_number')
+            .select('id, name, email, user_number, apartment_id')
             .eq('id', decoded.sub)
             .single();
 
@@ -179,7 +181,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 id: userRow.id,
                 name: userRow.name,
                 email: userRow.email,
-                user_number: userRow.user_number
+                user_number: userRow.user_number,
+                apartment_id: userRow.apartment_id || null
               },
             });
           }
