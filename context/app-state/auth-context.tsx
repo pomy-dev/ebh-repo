@@ -6,7 +6,7 @@ import { supabase } from '../../utils/supabase-client';
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null; user?: { id: string, name: string; email: string; user_number?: number | null } };
   onRegister?: (name: string, email: string, user_number: number, password1: string, password2: string) => Promise<any>;
-  onLogin?: (email: string, password: string) => Promise<any>;
+  onLogin?: (email: string, password: string, apartment_id: string) => Promise<any>;
   onLogout?: () => Promise<any>;
   onUpdateUser?: (name: string | null, email: string | null) => Promise<any>;
 }
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const register = async (name: string, email: string, user_number: number, password: string) => {
+  const register = async (name: string, email: string, user_number: number, password: string, apartment_id?: string) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, apartment_id: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -115,19 +115,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('id', decoded.sub)
         .single();
 
-      setAuthState({
-        token,
-        authenticated: true,
-        user: {
-          id: userRow?.id || decoded.sub || '',
-          name: userRow?.name || '',
-          email,
-          user_number: userRow?.user_number || '',
-          apartment_id: userRow?.apartment_id || null
-        },
-      });
+      // If apartment_id is provided, verify it matches
+      if (userRow && apartment_id && userRow.apartment_id && userRow.apartment_id !== apartment_id) {
+        return { error: true, msg: 'Apartment ID does not match our records.' };
+      }
 
-      return { error: false, msg: 'Login successful' };
+      if (userRow) {
+        setAuthState({
+          token,
+          authenticated: true,
+          user: {
+            id: userRow.id,
+            name: userRow.name || null,
+            email: userRow.email || null,
+            user_number: userRow.user_number || null,
+            apartment_id: userRow.apartment_id || null
+          },
+        });
+      }
+
+      // setAuthState({
+      //   token,
+      //   authenticated: true,
+      //   user: {
+      //     id: userRow?.id || decoded.sub || '',
+      //     name: userRow?.name || '',
+      //     email,
+      //     user_number: userRow?.user_number || '',
+      //     apartment_id: userRow?.apartment_id || null
+      //   },
+      // });
+
+      return { error: false, user: userRow };
     } catch (err: any) {
       return { error: true, msg: err.message || 'Something went wrong' };
     }

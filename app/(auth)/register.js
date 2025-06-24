@@ -32,7 +32,7 @@ const Register = () => {
       return;
     }
 
-    const result = await onRegister(name, email, phone, password, confirmPassword);
+    const result = await onRegister(name, email, phone, password, confirmPassword, aptKey);
     if (result?.error) {
       setError(result.msg);
       setLoading(false);

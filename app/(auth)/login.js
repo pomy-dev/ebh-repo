@@ -8,8 +8,10 @@ const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [aptkey, setAptkey] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showAptKey, setShowAptKey] = useState(false);
   const [error, setError] = useState(null);
   const { onLogin } = useAuth();
 
@@ -21,7 +23,7 @@ const Login = () => {
       setLoading(false);
       return;
     }
-    const result = await onLogin(email, password);
+    const result = await onLogin(email, password, aptKey);
     if (result?.error) {
       setError(result.msg);
       setLoading(false);
@@ -43,9 +45,6 @@ const Login = () => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Icons.Ionicons name="arrow-back-outline" size={24} color="#0a0a0a" />
-          </TouchableOpacity>
           <Image source={require('../../assets/logo.png')} style={styles.logo} />
         </View>
 
@@ -94,6 +93,16 @@ const Login = () => {
             </TouchableOpacity>
           </View>
 
+          <View style={styles.inputContainer}>
+            <Icons.FontAwesome name="key" size={20} color="#6B7280" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Apartment Id"
+              value={aptkey}
+              onChangeText={setAptkey}
+            />
+          </View>
+
           <TouchableOpacity onPress={() => router.push('/forgot-password')} style={styles.forgotPassword}>
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
@@ -130,17 +139,17 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'start',
     marginBottom: 40,
-    marginTop: 16,
+    marginTop: 10,
   },
   backButton: {
     padding: 8,
   },
   logo: {
-    width: 48,
-    height: 48,
+    width: 70,
+    height: 70,
+    borderRadius: 10,
     resizeMode: 'contain',
     marginLeft: 16,
   },
