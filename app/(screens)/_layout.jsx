@@ -8,6 +8,12 @@ export default function AuthLayout() {
   return (
     <Stack>
       <Stack.Screen
+        name="properties"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="maintenance"
         options={{
           title: "Maintenance",
