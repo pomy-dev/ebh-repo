@@ -8,7 +8,7 @@ const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [aptkey, setAptkey] = useState('');
+  const [aptkey, setAptkey] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showAptKey, setShowAptKey] = useState(false);
@@ -24,9 +24,12 @@ const Login = () => {
       return;
     }
     const result = await onLogin(email, password, aptkey);
+    console.log('000000000000000000');
     if (result?.error) {
+      
       setError(result.msg);
       setLoading(false);
+      console.log('-----');
       console.log(result);
     } else {
       console.log(result || 'Login successful!');
