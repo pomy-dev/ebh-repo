@@ -102,6 +102,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error || !data.session) {
+        
         return { error: true, msg: error?.message || 'Login failed' };
       }
 
