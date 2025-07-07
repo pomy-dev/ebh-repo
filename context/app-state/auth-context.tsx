@@ -24,8 +24,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [paymentData, setPaymentData] = useState(null);
 
 
-
-
   // 👇 Restore user session on app startup
   const loadUser = async () => {
     const token = await SecureStore.getItemAsync(TOKEN_KEY);
