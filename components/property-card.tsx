@@ -9,10 +9,14 @@ import {
   ScrollView,
   TextInput,
   Alert,
-  Dimensions
+  Dimensions,
+  ActivityIndicator
 } from 'react-native';
 import { Apartment, RentRequest } from '../types';
 import { Icons } from '../constant/icons';
+import { supabase } from '../utils/supabase-client';
+import { useAuth } from '../context/app-state/auth-context';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface PropertyCardProps {
   apartment: Apartment;
@@ -27,15 +31,19 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
   const [showGallery, setShowGallery] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [formData, setFormData] = useState({
-    applicantName: '',
+    applicantTitle: '',
     email: '',
     phone: '',
     monthlyIncome: '',
     employmentStatus: '',
     employer: '',
     references: '',
+    numberOfMembers: '',
     moveInDate: ''
   });
+  const { authState } = useAuth();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Gallery images for different angles of the apartment
   const galleryImages = [
@@ -47,17 +55,40 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
     'https://images.pexels.com/photos/1571473/pexels-photo-1571473.jpeg'
   ];
 
-  const handleRequestSubmit = () => {
-    if (!formData.applicantName || !formData.email || !formData.phone) {
+  const handleRequestSubmit = async () => {
+    if (!authState?.authenticated && !authState?.user) return;
+
+    if (!formData.applicantTitle || !formData.employmentStatus || !formData.employer) {
       Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
 
-    Alert.alert(
-      'Request Submitted',
-      'Your application has been sent to the property owner. You will receive a response within 24-48 hours.',
-      [{ text: 'OK', onPress: () => setShowModal(false) }]
-    );
+    setLoading(true);
+
+    try {
+      const user_email = authState.user?.email
+      const user_phone = authState.user?.user_number
+      const user_name = authState.user?.name
+
+      const data = await supabase.from('tenants_applications')
+        .insert([{ name: user_name, user_title: formData.applicantTitle, email: user_email, phone: user_phone, employment_status: formData.employmentStatus, employer_name: formData.employer, numberOfMembers: formData.numberOfMembers, references: formData.references, move_in_date: formData.moveInDate, apartment_id: apartment.id }])
+        .select('apartment_id').single();
+
+      if (!data) return;
+
+      Alert.alert(
+        'Request Submitted',
+        'Your application has been sent to the property owner. You will receive a response within 24-48 hours.',
+        [{ text: 'OK', onPress: () => setShowModal(false) }]
+      );
+
+      console.log('Application submitted:', data);
+
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : String(error));
+    } finally {
+      setLoading(false); // <-- hide loading spinner
+    }
   };
 
   const openGallery = (index: number = 0) => {
@@ -236,6 +267,7 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
               </Text>
             </TouchableOpacity>
 
+            {/* Apartment details */}
             <View style={styles.apartmentDetails}>
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>Bedrooms:</Text>
@@ -255,6 +287,7 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
               </View>
             </View>
 
+            {/* Apartment amenities */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Amenities</Text>
               <View style={styles.amenitiesContainer}>
@@ -266,6 +299,7 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
               </View>
             </View>
 
+            {/* Apartment rules */}
             <View style={styles.section}>
               <TouchableOpacity
                 style={styles.rulesHeader}
@@ -284,6 +318,7 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
               )}
             </View>
 
+            {/* If Apartment Available show request form button */}
             {!apartment.isOccupied && !showRequestForm && (
               <TouchableOpacity
                 style={styles.requestButton}
@@ -293,39 +328,18 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
               </TouchableOpacity>
             )}
 
+            {/* application form for apartment unit */}
             {showRequestForm && (
               <View style={styles.formContainer}>
-                <Text style={styles.formTitle}>Application Form</Text>
+                <Text style={styles.formTitle}>Apply for apartment</Text>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Full Name *</Text>
+                  <Text style={styles.inputLabel}>Applicant Title</Text>
                   <TextInput
                     style={styles.input}
-                    value={formData.applicantName}
-                    onChangeText={(text) => setFormData({ ...formData, applicantName: text })}
-                    placeholder="Enter your full name"
-                  />
-                </View>
-
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Email *</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={formData.email}
-                    onChangeText={(text) => setFormData({ ...formData, email: text })}
-                    placeholder="Enter your email"
-                    keyboardType="email-address"
-                  />
-                </View>
-
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Phone Number *</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={formData.phone}
-                    onChangeText={(text) => setFormData({ ...formData, phone: text })}
-                    placeholder="Enter your phone number"
-                    keyboardType="phone-pad"
+                    value={formData.applicantTitle}
+                    onChangeText={(text) => setFormData({ ...formData, applicantTitle: text })}
+                    placeholder="Sir / Mr / Mrs / Miss"
                   />
                 </View>
 
@@ -362,13 +376,42 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Preferred Move-in Date</Text>
+                  <Text style={styles.inputLabel}>Number of People you will move in with</Text>
                   <TextInput
-                    style={styles.input}
-                    value={formData.moveInDate}
-                    onChangeText={(text) => setFormData({ ...formData, moveInDate: text })}
-                    placeholder="MM/DD/YYYY"
+                    style={[styles.input, styles.textArea]}
+                    value={formData.numberOfMembers}
+                    onChangeText={(text) => setFormData({ ...formData, numberOfMembers: text })}
+                    placeholder="State the number of people you will move in with and your relationship with them."
+                    multiline
+                    numberOfLines={3}
                   />
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Preferred Move-in Date</Text>
+                  <TouchableOpacity
+                    style={styles.input}
+                    onPress={() => setShowDatePicker(true)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={{ color: formData.moveInDate ? '#111827' : '#9CA3AF' }}>
+                      {formData.moveInDate ? formData.moveInDate : 'MM/DD/YYYY'}
+                    </Text>
+                  </TouchableOpacity>
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={formData.moveInDate ? new Date(formData.moveInDate) : new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(_, selectedDate) => {
+                        setShowDatePicker(false);
+                        if (selectedDate) {
+                          const formatted = `${selectedDate.getMonth() + 1}/${selectedDate.getDate()}/${selectedDate.getFullYear()}`;
+                          setFormData({ ...formData, moveInDate: formatted });
+                        }
+                      }}
+                    />
+                  )}
                 </View>
 
                 <View style={styles.formButtons}>
@@ -383,8 +426,9 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                     style={styles.submitButton}
                     onPress={handleRequestSubmit}
                   >
-                    <Icons.Feather name='send' size={16} color="#FFFFFF" />
-                    <Text style={styles.submitButtonText}>Submit Request</Text>
+                    {loading ?
+                      <ActivityIndicator size="large" color="#FFFFFF" /> :
+                      <><Icons.Feather name='send' size={16} color="#FFFFFF" /><Text style={styles.submitButtonText}>Submit Request</Text></>}
                   </TouchableOpacity>
                 </View>
               </View>
@@ -397,6 +441,17 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
 }
 
 const styles = StyleSheet.create({
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(17, 24, 39, 0.35)', // dark with opacity
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,

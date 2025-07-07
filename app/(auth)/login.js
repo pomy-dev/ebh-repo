@@ -23,7 +23,7 @@ const Login = () => {
       setLoading(false);
       return;
     }
-    const result = await onLogin(email, password, aptKey);
+    const result = await onLogin(email, password, aptkey);
     if (result?.error) {
       setError(result.msg);
       setLoading(false);
