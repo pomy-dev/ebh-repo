@@ -17,7 +17,7 @@ import { useRouter } from "expo-router";
 // local modules
 import { supabase } from "../../utils/supabase-client";
 import { useAuth } from "../../context/app-state/auth-context";
-import { getUserIdByEmail } from "../../services/supabase-services1";
+import { getUserIdByEmail } from "../../services/supabase-services";
 
 const PaymentsScreen = () => {
   const [showSheet, setShowSheet] = useState(false);
