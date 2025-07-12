@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const login = async (email: string, password: string, apartment_id: string) => {
+  const login = async (email: string, password: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -99,7 +99,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error || !data.session) {
-        
         return { error: true, msg: error?.message || 'Login failed' };
       }
 
@@ -114,8 +113,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       // If apartment_id is provided, verify it matches
-      if (userRow && apartment_id && userRow.apartment_id && userRow.apartment_id !== apartment_id) {
-        return { error: true, msg: 'Apartment ID does not match our records.' };
+      if (userRow && userRow.apartment_id) {
+        return { error: true, msg: 'Apartment ID was not found.' };
       }
 
       if (userRow) {
