@@ -6,10 +6,9 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
+  ActivityIndicator
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import {
   useFonts,
   Inter_400Regular,
@@ -27,7 +26,7 @@ export default function PropertiesScreen() {
   const [apartments, setApartments] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilter, setShowFilter] = useState(false);
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterStatus, setFilterStatus] = useState('all'); // Default to 'available'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -64,8 +63,9 @@ export default function PropertiesScreen() {
 
     const matchesFilter =
       filterStatus === "all" ||
-      (filterStatus === "available" && !apartment.isOccupied) ||
-      (filterStatus === "occupied" && apartment.isOccupied);
+      (filterStatus === "available" && apartment.status === "available") ||
+      (filterStatus === "occupied" && apartment.status === "occupied") ||
+      (filterStatus === "maintenance" && apartment.status === "maintenance");
 
     return matchesSearch && matchesFilter;
   });
@@ -105,8 +105,12 @@ export default function PropertiesScreen() {
       {showFilter && (
         <View style={styles.filterContainer}>
           <Text style={styles.filterTitle}>Filter by Status</Text>
-          <View style={styles.filterOptions}>
-            {["all", "available", "occupied"].map((status) => (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterOptions}
+          >
+            {["all", "available", "occupied", "maintenance"].map((status) => (
               <TouchableOpacity
                 key={status}
                 style={[
@@ -125,7 +129,7 @@ export default function PropertiesScreen() {
                 </Text>
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
         </View>
       )}
 
@@ -146,7 +150,7 @@ export default function PropertiesScreen() {
             <View style={styles.resultsHeader}>
               <Text style={styles.resultsText}>
                 {filteredApartments.length}{" "}
-                {filteredApartments.length === 1 ? "property" : "properties"}{" "}
+                {filteredApartments.length === 1 ? "apartment" : "apartments"}{" "}
                 found
               </Text>
             </View>
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F9FAFB",
-   
+
     overflow: "hidden",
   },
   header: {
@@ -236,7 +240,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   filterOptions: {
-    flexDirection: "row",
+    paddingHorizontal: 1,
     gap: 8,
   },
   filterOption: {

@@ -4,16 +4,7 @@ export const getApartmentsWithProperty = async () => {
   const { data, error } = await supabase
     .from('property_apartments')
     .select(`
-      id,
-      unit,
-      status,
-      numberOfbedRooms,
-      numberOfBath,
-      squareFeet,
-      monthly_rent,
-      property_id,
-      tenant_id,
-      images,
+      *,
       properties (
         property_name,
         property_type,
@@ -21,7 +12,7 @@ export const getApartmentsWithProperty = async () => {
         city,
         amenities,
         property_image,
-        rules,
+        rules
       )
     `);
 
@@ -33,7 +24,7 @@ export const getApartmentsWithProperty = async () => {
   return data.map((item) => ({
     id: item.id,
     propertyId: item.property_id,
-    propertyName: `${item.properties.property_name} , ${item.properties.property_type}`,
+    propertyName: `${item.properties.property_name}, ${item.properties.property_type.charAt(0).toUpperCase() + item.properties.property_type.slice(1)}`,
     unit: item.unit,
     status: item.status,
     monthlyRent: item.monthly_rent,
@@ -45,6 +36,6 @@ export const getApartmentsWithProperty = async () => {
     location: item.properties.street_address + ', ' + item.properties.city,
     owner: item?.owner || 'N/A',
     ownerContact: item?.ownerContact || '',
-    image: item.properties.property_image
+    images: item.unitImages || [], // Assuming unitImages is an array of image URLs
   }));
 };

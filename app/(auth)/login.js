@@ -21,14 +21,11 @@ const Login = () => {
       setLoading(false);
       return;
     }
-    const result = await onLogin(email, password, aptkey);
-    console.log('000000000000000000');
-    if (result?.error) {
 
+    const result = await onLogin(email, password);
+    if (result?.error) {
       setError(result.msg);
       setLoading(false);
-      console.log('-----');
-      console.log(result);
     } else {
       console.log(result || 'Login successful!');
       setLoading(false);

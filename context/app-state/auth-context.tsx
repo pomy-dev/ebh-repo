@@ -131,18 +131,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       }
 
-      // setAuthState({
-      //   token,
-      //   authenticated: true,
-      //   user: {
-      //     id: userRow?.id || decoded.sub || '',
-      //     name: userRow?.name || '',
-      //     email,
-      //     user_number: userRow?.user_number || '',
-      //     apartment_id: userRow?.apartment_id || null
-      //   },
-      // });
-
       return { error: false, user: userRow };
     } catch (err: any) {
       return { error: true, msg: err.message || 'Something went wrong' };
