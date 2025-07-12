@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import {
   View,
@@ -17,6 +19,7 @@ import { Icons } from '../constant/icons';
 import { supabase } from '../utils/supabase-client';
 import { useAuth } from '../context/app-state/auth-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { insertTenantApp } from '../services/supabase-services';
 
 interface PropertyCardProps {
   apartment: Apartment;
@@ -32,14 +35,15 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [formData, setFormData] = useState({
     applicantTitle: '',
-    email: '',
-    phone: '',
-    monthlyIncome: '',
     employmentStatus: '',
     employer: '',
     references: '',
     numberOfMembers: '',
-    moveInDate: ''
+    emergencyName: '',
+    emergencyContact: '',
+    emergencyRelationship: '',
+    moveInDate: '',
+    lease_end_date: ''
   });
   const { authState } = useAuth();
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -47,12 +51,7 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
 
   // Gallery images for different angles of the apartment
   const galleryImages = [
-    apartment.image,
-    'https://images.pexels.com/photos/1571468/pexels-photo-1571468.jpeg',
-    'https://images.pexels.com/photos/1571467/pexels-photo-1571467.jpeg',
-    'https://images.pexels.com/photos/1571471/pexels-photo-1571471.jpeg',
-    'https://images.pexels.com/photos/1571472/pexels-photo-1571472.jpeg',
-    'https://images.pexels.com/photos/1571473/pexels-photo-1571473.jpeg'
+    ...apartment.images
   ];
 
   const handleRequestSubmit = async () => {
@@ -70,9 +69,23 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
       const user_phone = authState.user?.user_number
       const user_name = authState.user?.name
 
-      const data = await supabase.from('tenants_applications')
-        .insert([{ name: user_name, user_title: formData.applicantTitle, email: user_email, phone: user_phone, employment_status: formData.employmentStatus, employer_name: formData.employer, numberOfMembers: formData.numberOfMembers, references: formData.references, move_in_date: formData.moveInDate, apartment_id: apartment.id }])
-        .select('apartment_id').single();
+      const tenantDetails = {
+        applicantTitle: formData.applicantTitle,
+        email: user_email || '',
+        phone: user_phone || '',
+        name: user_name || '',
+        employmentStatus: formData.employmentStatus,
+        employer: formData.employer,
+        references: formData.references,
+        numberOfMembers: formData.numberOfMembers,
+        emergencyName: formData.emergencyName,
+        emergencyContact: formData.emergencyContact,
+        emergencyRelationship: formData.emergencyRelationship,
+        lease_end_date: formData.lease_end_date,
+        moveInDate: formData.moveInDate
+      }
+
+      const data = await insertTenantApp(tenantDetails, apartment.id);
 
       if (!data) return;
 
@@ -107,11 +120,11 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
   return (
     <>
       <TouchableOpacity style={styles.card} onPress={() => setShowModal(true)}>
-        <Image source={{ uri: apartment.image }} style={styles.image} />
+        <Image source={{ uri: apartment.images[0] }} style={styles.image} />
         <View style={styles.overlay}>
-          <View style={[styles.statusBadge, { backgroundColor: apartment.isOccupied ? '#EF4444' : '#10B981' }]}>
+          <View style={[styles.statusBadge, { backgroundColor: apartment?.status === 'occupied' ? '#EF4444' : apartment?.status === 'available' ? '#10B981' : '#e0cb78ff' }]}>
             <Text style={styles.statusText}>
-              {apartment.isOccupied ? 'Occupied' : 'Available'}
+              {apartment.status}
             </Text>
           </View>
         </View>
@@ -148,17 +161,17 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
           <TouchableOpacity
             style={[
               styles.amenitiesButton,
-              apartment.isOccupied && styles.amenitiesButtonDisabled
+              apartment.status !== 'available' && styles.amenitiesButtonDisabled
             ]}
-            onPress={() => !apartment.isOccupied && openGallery()}
-            disabled={apartment.isOccupied}
+            onPress={() => apartment.status === 'available' && openGallery()}
+            disabled={apartment.status === 'available' ? false : true}
           >
-            <Icons.AntDesign name='picture' size={16} color={apartment.isOccupied ? "#9CA3AF" : "#2563EB"} />
+            <Icons.AntDesign name='picture' size={16} color={apartment.status !== 'available' ? "#9CA3AF" : "#2563EB"} />
             <Text style={[
               styles.amenitiesButtonText,
-              apartment.isOccupied && styles.amenitiesButtonTextDisabled
+              apartment.status !== 'available' && styles.amenitiesButtonTextDisabled
             ]}>
-              {apartment.isOccupied ? 'Gallery Unavailable' : 'View Gallery'}
+              {apartment.images.length <= 0 ? 'Gallery Unavailable' : 'View Gallery'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -227,14 +240,14 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
             </TouchableOpacity>
           </View>
 
-          <Image source={{ uri: apartment.image }} style={styles.modalImage} />
+          <Image source={{ uri: apartment.images[0] }} style={styles.modalImage} />
 
           <View style={styles.modalContent}>
             <View style={styles.modalRow}>
               <Text style={styles.modalUnit}>Unit {apartment.unit}</Text>
-              <View style={[styles.statusBadge, { backgroundColor: apartment.isOccupied ? '#EF4444' : '#10B981' }]}>
+              <View style={[styles.statusBadge, { backgroundColor: apartment.status === 'occupied' ? '#EF4444' : apartment.status === 'available' ? '#10B981' : '#e0cb78ff' }]}>
                 <Text style={styles.statusText}>
-                  {apartment.isOccupied ? 'Occupied' : 'Available'}
+                  {apartment.status}
                 </Text>
               </View>
             </View>
@@ -253,17 +266,17 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
             <TouchableOpacity
               style={[
                 styles.modalGalleryButton,
-                apartment.isOccupied && styles.modalGalleryButtonDisabled
+                apartment.status !== 'available' && styles.modalGalleryButtonDisabled
               ]}
-              onPress={() => !apartment.isOccupied && openGallery()}
-              disabled={apartment.isOccupied}
+              onPress={() => apartment.status === 'available' ? openGallery() : setShowGallery(false)}
+              disabled={apartment.status === 'available' ? false : true}
             >
-              <Icons.AntDesign name='picture' size={20} color={apartment.isOccupied ? "#9CA3AF" : "#FFFFFF"} />
+              <Icons.AntDesign name='picture' size={20} color={apartment.status === 'occupied' ? "#9CA3AF" : "#FFFFFF"} />
               <Text style={[
                 styles.modalGalleryButtonText,
-                apartment.isOccupied && styles.modalGalleryButtonTextDisabled
+                apartment.status !== 'available' && styles.modalGalleryButtonTextDisabled
               ]}>
-                {apartment.isOccupied ? 'Gallery Unavailable' : 'View Photo Gallery'}
+                {apartment.images?.length <= 0 ? 'Gallery Unavailable' : 'View Photo Gallery'}
               </Text>
             </TouchableOpacity>
 
@@ -319,7 +332,7 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
             </View>
 
             {/* If Apartment Available show request form button */}
-            {!apartment.isOccupied && !showRequestForm && (
+            {apartment.status.match('available') && !showRequestForm && (
               <TouchableOpacity
                 style={styles.requestButton}
                 onPress={() => setShowRequestForm(true)}
@@ -340,6 +353,7 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                     value={formData.applicantTitle}
                     onChangeText={(text) => setFormData({ ...formData, applicantTitle: text })}
                     placeholder="Sir / Mr / Mrs / Miss"
+
                   />
                 </View>
 
@@ -356,22 +370,22 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                 <View style={styles.inputGroup}>
                   <Text style={styles.inputLabel}>Employer</Text>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, styles.textArea]}
                     value={formData.employer}
                     onChangeText={(text) => setFormData({ ...formData, employer: text })}
-                    placeholder="Enter your employer name"
+                    placeholder="Enter your employer name & Company"
+                    multiline
+                    numberOfLines={3}
                   />
                 </View>
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.inputLabel}>References</Text>
                   <TextInput
-                    style={[styles.input, styles.textArea]}
+                    style={styles.input}
                     value={formData.references}
                     onChangeText={(text) => setFormData({ ...formData, references: text })}
-                    placeholder="Provide contact information for references"
-                    multiline
-                    numberOfLines={3}
+                    placeholder="Contacts of employer  eg. email or phone number"
                   />
                 </View>
 
@@ -384,6 +398,36 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                     placeholder="State the number of people you will move in with and your relationship with them."
                     multiline
                     numberOfLines={3}
+                  />
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Emergency Name</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={formData.emergencyName}
+                    onChangeText={(text) => setFormData({ ...formData, emergencyName: text })}
+                    placeholder="Next of kin name"
+                  />
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Emergency Contact</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={formData.emergencyContact}
+                    onChangeText={(text) => setFormData({ ...formData, emergencyContact: text })}
+                    placeholder="Next of kin contact"
+                  />
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Relationship</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={formData.emergencyRelationship}
+                    onChangeText={(text) => setFormData({ ...formData, emergencyRelationship: text })}
+                    placeholder="Relationship with Next of kin"
                   />
                 </View>
 
@@ -401,6 +445,33 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                   {showDatePicker && (
                     <DateTimePicker
                       value={formData.moveInDate ? new Date(formData.moveInDate) : new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(_, selectedDate) => {
+                        setShowDatePicker(false);
+                        if (selectedDate) {
+                          const formatted = `${selectedDate.getMonth() + 1}/${selectedDate.getDate()}/${selectedDate.getFullYear()}`;
+                          setFormData({ ...formData, moveInDate: formatted });
+                        }
+                      }}
+                    />
+                  )}
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Lease End Date</Text>
+                  <TouchableOpacity
+                    style={styles.input}
+                    onPress={() => setShowDatePicker(true)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={{ color: formData.lease_end_date ? '#111827' : '#9CA3AF' }}>
+                      {formData.lease_end_date ? formData.lease_end_date : 'MM/DD/YYYY'}
+                    </Text>
+                  </TouchableOpacity>
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={formData.lease_end_date ? new Date(formData.lease_end_date) : new Date()}
                       mode="date"
                       display="default"
                       onChange={(_, selectedDate) => {

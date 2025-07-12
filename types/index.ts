@@ -13,7 +13,7 @@ export interface Apartment {
   propertyId: string;
   propertyName: string;
   unit: string;
-  isOccupied: boolean;
+  status: string;
   monthlyRent: number;
   amenities: string[];
   rules: string[];
@@ -23,7 +23,7 @@ export interface Apartment {
   location: string;
   owner: string;
   ownerContact: string;
-  image: string;
+  images: string[];
 }
 
 export interface MaintenanceRequest {

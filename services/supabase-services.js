@@ -47,16 +47,6 @@ export async function getUserIdByEmail(email) {
   return data ? data.id : null; // Return the ID or null if not found
 }
 
-/**
- * Inserts a new maintenance request into the "Maintenance" table.
- */
-
-
-/**
- * Inserts a new maintenance request into the "Maintenance" table.
- */
-
-
 export async function request_maintenance({
   user_id,
   case_title,
@@ -99,7 +89,6 @@ export async function uploadMultipleImages(files) {
   }
 }
 
-
 async function uploadImage(fileUri) {
   try {
     const fileName = fileUri.split('/').pop();
@@ -135,5 +124,35 @@ async function uploadImage(fileUri) {
     console.error('Upload failed:', error.message);
     throw error;
   }
+}
+
+export async function insertTenantApp(appDetails, apartmentId) {
+  const data = await supabase.from('tenants_applications')
+    .insert(
+      {
+        name: appDetails?.user_name,
+        user_title: appDetails?.applicantTitle,
+        email: appDetails?.user_email,
+        phone: appDetails?.user_phone,
+        employment_status: appDetails?.employmentStatus,
+        employer_name: appDetails?.employer,
+        numberOfMembers: appDetails?.numberOfMembers,
+        references: appDetails?.references,
+        emergency_name: appDetails?.emergencyName,
+        emergency_contact: appDetails?.emergencyContact,
+        emergency_relationship: appDetails?.emergencyRelationship,
+        move_in_date: appDetails?.moveInDate,
+        lease_end_date: appDetails?.lease_end_date,
+        apartment_id: apartmentId
+
+      })
+    .select('apartment_id').single();
+
+  if (data.error) {
+    console.error('Error inserting tenant application:', data.error.message);
+    return { data: null, error: data.error };
+  }
+
+  return data;
 }
 

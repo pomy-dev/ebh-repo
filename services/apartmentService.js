@@ -1,22 +1,18 @@
 import { supabase } from '../utils/supabase-client';
+
 export const getApartmentsWithProperty = async () => {
   const { data, error } = await supabase
     .from('property_apartments')
     .select(`
-      id,
-      unit,
-      isOccupied,
-      amenities,
-      rules,
-      features,
-      property_id,
+      *,
       properties (
         property_name,
         property_type,
         street_address,
         city,
-        monthly_rent,
-        property_image
+        amenities,
+        property_image,
+        rules
       )
     `);
 
@@ -28,18 +24,18 @@ export const getApartmentsWithProperty = async () => {
   return data.map((item) => ({
     id: item.id,
     propertyId: item.property_id,
-    propertyName: `${item.properties.property_name} , ${item.properties.property_type}`,
+    propertyName: `${item.properties.property_name}, ${item.properties.property_type.charAt(0).toUpperCase() + item.properties.property_type.slice(1)}`,
     unit: item.unit,
-    isOccupied: item.isOccupied || false,
-    monthlyRent: item.properties.monthly_rent,
-    amenities: item.amenities,
-    rules: item.rules,
-    bedrooms: item.features?.bedrooms || 0,
-    bathrooms: item.features?.bathrooms || 0,
-    squareFeet: item.features?.squareFeet || 0,
+    status: item.status,
+    monthlyRent: item.monthly_rent,
+    amenities: item.properties.amenities,
+    rules: item.properties.rules,
+    bedrooms: item.numberOfbedRooms || 0,
+    bathrooms: item.numberOfBath || 0,
+    squareFeet: item.squareFeet || 0,
     location: item.properties.street_address + ', ' + item.properties.city,
-    owner: item.features?.owner || 'N/A',
-    ownerContact: item.features?.ownerContact || '',
-    image: item.properties.property_image
+    owner: item?.owner || 'N/A',
+    ownerContact: item?.ownerContact || '',
+    images: item.unitImages || [], // Assuming unitImages is an array of image URLs
   }));
 };
