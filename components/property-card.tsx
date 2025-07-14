@@ -14,9 +14,8 @@ import {
   Dimensions,
   ActivityIndicator
 } from 'react-native';
-import { Apartment, RentRequest } from '../types';
+import { Apartment } from '../types';
 import { Icons } from '../constant/icons';
-import { supabase } from '../utils/supabase-client';
 import { useAuth } from '../context/app-state/auth-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { insertTenantApp } from '../services/supabase-services';
@@ -43,10 +42,11 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
     emergencyContact: '',
     emergencyRelationship: '',
     moveInDate: '',
-    lease_end_date: ''
+    leaseEndDate: ''
   });
   const { authState } = useAuth();
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [datePickerField, setDatePickerField] = useState<'moveInDate' | 'leaseEndDate' | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Gallery images for different angles of the apartment
@@ -69,7 +69,7 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
       const user_phone = authState.user?.user_number
       const user_name = authState.user?.name
 
-      const tenantDetails = {
+      const appDetails = {
         applicantTitle: formData.applicantTitle,
         email: user_email || '',
         phone: user_phone || '',
@@ -81,11 +81,11 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
         emergencyName: formData.emergencyName,
         emergencyContact: formData.emergencyContact,
         emergencyRelationship: formData.emergencyRelationship,
-        lease_end_date: formData.lease_end_date,
-        moveInDate: formData.moveInDate
+        moveInDate: formData.moveInDate,
+        lease_end_date: formData.leaseEndDate,
       }
 
-      const data = await insertTenantApp(tenantDetails, apartment.id);
+      const data = await insertTenantApp(appDetails, apartment.id);
 
       if (!data) return;
 
@@ -344,7 +344,9 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
             {/* application form for apartment unit */}
             {showRequestForm && (
               <View style={styles.formContainer}>
-                <Text style={styles.formTitle}>Apply for apartment</Text>
+                <Text style={styles.formTitle}>Request Lease</Text>
+
+                <Text style={styles.formHeader}>Lease Holder Details</Text>
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.inputLabel}>Applicant Title</Text>
@@ -373,9 +375,9 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                     style={[styles.input, styles.textArea]}
                     value={formData.employer}
                     onChangeText={(text) => setFormData({ ...formData, employer: text })}
-                    placeholder="Enter your employer name & Company"
+                    placeholder="Enter your employer name & place of employment"
                     multiline
-                    numberOfLines={3}
+                    numberOfLines={2}
                   />
                 </View>
 
@@ -389,13 +391,16 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                   />
                 </View>
 
+                <View style={styles.divider}></View>
+                <Text style={styles.formHeader}>Emergency Details</Text>
+
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Number of People you will move in with</Text>
+                  <Text style={styles.inputLabel}>Relatives to live with</Text>
                   <TextInput
                     style={[styles.input, styles.textArea]}
                     value={formData.numberOfMembers}
                     onChangeText={(text) => setFormData({ ...formData, numberOfMembers: text })}
-                    placeholder="State the number of people you will move in with and your relationship with them."
+                    placeholder="Describe the people you will live with and your relationship with them."
                     multiline
                     numberOfLines={3}
                   />
@@ -431,59 +436,64 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                   />
                 </View>
 
+                <View style={styles.divider}></View>
+                <Text style={styles.formHeader}>Lease Info</Text>
+
                 <View style={styles.inputGroup}>
                   <Text style={styles.inputLabel}>Preferred Move-in Date</Text>
                   <TouchableOpacity
                     style={styles.input}
-                    onPress={() => setShowDatePicker(true)}
+                    onPress={() => {
+                      setShowDatePicker(true);
+                      setDatePickerField('moveInDate');
+                    }}
                     activeOpacity={0.7}
                   >
                     <Text style={{ color: formData.moveInDate ? '#111827' : '#9CA3AF' }}>
                       {formData.moveInDate ? formData.moveInDate : 'MM/DD/YYYY'}
                     </Text>
                   </TouchableOpacity>
-                  {showDatePicker && (
-                    <DateTimePicker
-                      value={formData.moveInDate ? new Date(formData.moveInDate) : new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(_, selectedDate) => {
-                        setShowDatePicker(false);
-                        if (selectedDate) {
-                          const formatted = `${selectedDate.getMonth() + 1}/${selectedDate.getDate()}/${selectedDate.getFullYear()}`;
-                          setFormData({ ...formData, moveInDate: formatted });
-                        }
-                      }}
-                    />
-                  )}
                 </View>
 
                 <View style={styles.inputGroup}>
                   <Text style={styles.inputLabel}>Lease End Date</Text>
                   <TouchableOpacity
                     style={styles.input}
-                    onPress={() => setShowDatePicker(true)}
+                    onPress={() => {
+                      setShowDatePicker(true);
+                      setDatePickerField('leaseEndDate');
+                    }}
                     activeOpacity={0.7}
                   >
-                    <Text style={{ color: formData.lease_end_date ? '#111827' : '#9CA3AF' }}>
-                      {formData.lease_end_date ? formData.lease_end_date : 'MM/DD/YYYY'}
+                    <Text style={{ color: formData.leaseEndDate ? '#111827' : '#9CA3AF' }}>
+                      {formData.leaseEndDate ? formData.leaseEndDate : 'MM/DD/YYYY'}
                     </Text>
                   </TouchableOpacity>
-                  {showDatePicker && (
-                    <DateTimePicker
-                      value={formData.lease_end_date ? new Date(formData.lease_end_date) : new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(_, selectedDate) => {
-                        setShowDatePicker(false);
-                        if (selectedDate) {
-                          const formatted = `${selectedDate.getMonth() + 1}/${selectedDate.getDate()}/${selectedDate.getFullYear()}`;
-                          setFormData({ ...formData, moveInDate: formatted });
-                        }
-                      }}
-                    />
-                  )}
                 </View>
+
+                {showDatePicker && datePickerField && (
+                  <DateTimePicker
+                    value={
+                      datePickerField === 'moveInDate'
+                        ? (formData.moveInDate ? new Date(formData.moveInDate) : new Date())
+                        : (formData.leaseEndDate ? new Date(formData.leaseEndDate) : new Date())
+                    }
+                    mode="date"
+                    display="default"
+                    onChange={(_, selectedDate) => {
+                      setShowDatePicker(false);
+                      if (selectedDate) {
+                        const formatted = `${selectedDate.getMonth() + 1}/${selectedDate.getDate()}/${selectedDate.getFullYear()}`;
+                        if (datePickerField === 'moveInDate') {
+                          setFormData({ ...formData, moveInDate: formatted });
+                        } else if (datePickerField === 'leaseEndDate') {
+                          setFormData({ ...formData, leaseEndDate: formatted });
+                        }
+                      }
+                      setDatePickerField(null);
+                    }}
+                  />
+                )}
 
                 <View style={styles.formButtons}>
                   <TouchableOpacity
@@ -498,8 +508,9 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
                     onPress={handleRequestSubmit}
                   >
                     {loading ?
-                      <ActivityIndicator size="large" color="#FFFFFF" /> :
-                      <><Icons.Feather name='send' size={16} color="#FFFFFF" /><Text style={styles.submitButtonText}>Submit Request</Text></>}
+                      <ActivityIndicator size={16} color="#FFFFFF" /> :
+                      <Icons.Feather name='send' size={16} color="#FFFFFF" />}
+                    <Text style={styles.submitButtonText}>Submit Request</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -717,7 +728,7 @@ const styles = StyleSheet.create({
     color: '#111827',
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 15,
   },
   sectionTitle: {
     fontSize: 18,
@@ -747,7 +758,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rulesContainer: {
-    marginTop: 12,
+    marginTop: 3,
   },
   ruleText: {
     fontSize: 14,
@@ -768,16 +779,23 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   formContainer: {
-    marginTop: 20,
+    marginTop: 7,
     paddingTop: 20,
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
   },
   formTitle: {
     fontSize: 20,
+    alignSelf: 'center',
     fontWeight: '700',
     color: '#111827',
     marginBottom: 20,
+  },
+  formHeader: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#3d3e40ff',
+    marginBottom: 7
   },
   inputGroup: {
     marginBottom: 16,
@@ -785,7 +803,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#374151',
+    color: '#66686cff',
     marginBottom: 6,
   },
   input: {
@@ -800,6 +818,12 @@ const styles = StyleSheet.create({
   textArea: {
     height: 80,
     textAlignVertical: 'top',
+  },
+  divider: {
+    marginTop: 7,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
   },
   formButtons: {
     flexDirection: 'row',
