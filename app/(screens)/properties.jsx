@@ -92,18 +92,6 @@ export default function PropertiesScreen() {
     return matchesSearch && matchesFilter;
   });
 
-  const handleDeleteApplication = async (id) => {
-    setIsDeleting(true);
-    try {
-      Alert.alert('This action cannot be undone? Are you sure?')
-      deleteApplication(id)
-    } catch (error) {
-      setError(error)
-    } finally {
-      setIsDeleting(false);
-    }
-  }
-
   const { width: screenWidth } = Dimensions.get('window');
   if (!fontsLoaded) return null;
 
@@ -147,11 +135,12 @@ export default function PropertiesScreen() {
       {showBanners && (
         <View style={{ padding: 10, backgroundColor: "#f3f4f6" }}>
           <Text style={{ fontSize: 10, color: '#a3a4a6ff', fontFamily: "Inter-Regular", }}>My lease requests</Text>
+
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {requests?.map((request) => (
               <View
                 key={request?.id}
-                style={[styles.banner, { width: screenWidth * 0.7 }]}
+                style={[styles.banner, { width: screenWidth * 0.8 }]}
               >
                 <View style={{ marginBottom: 5 }}>
                   <Text style={{ fontFamily: 'Inter-Regular', fontWeight: '700' }}>{request?.property_apartments?.properties?.property_name},{request?.property_apartments?.properties?.property_type}</Text>
@@ -178,6 +167,8 @@ export default function PropertiesScreen() {
                   </Text>
                 ))}
 
+                <Text style={{ fontFamily: 'Inter-Regular', fontSize: 15, color: '#a3a4a6ff', fontWeight: '200' }}>Created at:{new Date(request?.created_at).toLocaleDateString()}</Text>
+
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, alignSelf: 'flex-end', marginBottom: 5 }}>
                   {request?.conditions?.length > 0 && (
                     <TouchableOpacity
@@ -188,7 +179,18 @@ export default function PropertiesScreen() {
                     </TouchableOpacity>
                   )}
                   <TouchableOpacity
-                    onPress={handleDeleteApplication(request?.id)}
+                    onPress={() => {
+                      // delete application
+                      setIsDeleting(true);
+                      try {
+                        Alert.alert('This action cannot be undone? Are you sure?')
+                        deleteApplication(request?.id)
+                      } catch (error) {
+                        setError(error)
+                      } finally {
+                        setIsDeleting(false);
+                      }
+                    }}
                     style={styles.removeBanner}
                   >
                     {isDeleting ? <ActivityIndicator size={5} color='#ffffff' /> : <Text style={{ color: '#fff', fontSize: 12 }}>Cancel</Text>}
