@@ -82,3 +82,24 @@ export interface UserApartment {
   location: string;
   image: string;
 }
+
+export interface Application {
+  id: string;
+  apartmentId: number;
+  aprovalStatus: string;
+  conditions: string[];
+  createdAt: string;
+  email: string;
+  emergencyContact: string;
+  emergencyName: string;
+  emergencyRelationship: string;
+  employerName: string;
+  employmentStatus: string;
+  leaseEndDate: string;
+  moveInDate: string;
+  name: string;
+  numberOfMembers: string;
+  phone: string;
+  references: string;
+  userTitle: string;
+}

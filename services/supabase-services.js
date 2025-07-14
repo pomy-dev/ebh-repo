@@ -130,10 +130,10 @@ export async function insertTenantApp(appDetails, apartmentId) {
   const data = await supabase.from('tenants_applications')
     .insert(
       {
-        name: appDetails?.user_name,
+        name: appDetails?.name,
         user_title: appDetails?.applicantTitle,
-        email: appDetails?.user_email,
-        phone: appDetails?.user_phone,
+        email: appDetails?.email,
+        phone: appDetails?.phone,
         employment_status: appDetails?.employmentStatus,
         employer_name: appDetails?.employer,
         numberOfMembers: appDetails?.numberOfMembers,
@@ -156,3 +156,81 @@ export async function insertTenantApp(appDetails, apartmentId) {
   return data;
 }
 
+export const getApartmentsWithProperty = async () => {
+  const { data, error } = await supabase
+    .from('property_apartments')
+    .select(`
+      *,
+      properties (
+        property_name,
+        property_type,
+        street_address,
+        city,
+        amenities,
+        property_image,
+        rules
+      )
+    `);
+
+  if (error) {
+    console.error('Error fetching apartments:', error);
+    return [];
+  }
+
+  return data.map((item) => ({
+    id: item.id,
+    propertyId: item.property_id,
+    propertyName: `${item.properties.property_name}, ${item.properties.property_type.charAt(0).toUpperCase() + item.properties.property_type.slice(1)}`,
+    unit: item.unit,
+    status: item.status,
+    monthlyRent: item.monthly_rent,
+    amenities: item.properties.amenities,
+    rules: item.properties.rules,
+    bedrooms: item.numberOfbedRooms || 0,
+    bathrooms: item.numberOfBath || 0,
+    squareFeet: item.squareFeet || 0,
+    location: item.properties.street_address + ', ' + item.properties.city,
+    owner: item?.owner || 'N/A',
+    ownerContact: item?.ownerContact || '',
+    images: item.unitImages || [], // Assuming unitImages is an array of image URLs
+  }));
+};
+
+// get tenant application by email
+export async function fetchApplicationByEmail(email) {
+  if (!email) {
+    console.error('Email was not recieved!')
+    return;
+  }
+
+  const { data, error } = await supabase.from('tenants_applications')
+    .select(`
+      *,
+      property_apartments (
+        unit,
+        properties (
+        property_name,
+        property_type,
+        street_address,
+        city
+        )
+      )`
+    )
+    .eq('email', email);
+
+  if (error) {
+    console.error(`Error fetching requests of ${email}:`, error);
+    return [];
+  }
+
+  return data;
+}
+
+export async function deleteApplication(id) {
+  const { error } = await supabase
+    .from('tenants_applications')
+    .delete()
+    .eq('id', id)
+
+  if (error) return error;
+}
