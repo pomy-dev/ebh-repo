@@ -43,6 +43,17 @@ export default function PropertiesScreen() {
     "Inter-Bold": Inter_700Bold,
   });
 
+  const fetchRequests = async () => {
+    if (!authState?.authenticated && !authState?.user) return;
+    const user_email = authState?.user?.email;
+    try {
+      const applications = await fetchApplicationByEmail(user_email);
+      setRequests(applications);
+    } catch (err) {
+      setError("Failed to load user apartment requests.");
+    }
+  };
+
   useEffect(() => {
     // fetch apartments
     const fetchApartments = async () => {
@@ -56,19 +67,6 @@ export default function PropertiesScreen() {
       } finally {
         setLoading(false);
       }
-    };
-
-    const fetchRequests = async () => {
-      if (!authState?.authenticated && !authState?.user) return;
-      const user_email = authState?.user?.email
-
-      try {
-        const applications = await fetchApplicationByEmail(user_email);
-        setRequests(applications);
-      } catch (err) {
-        setError("Failed to load user apartment requests.");
-      }
-
     };
 
     fetchRequests();
@@ -180,20 +178,33 @@ export default function PropertiesScreen() {
                   )}
                   <TouchableOpacity
                     onPress={() => {
-                      // delete application
-                      setIsDeleting(true);
-                      try {
-                        Alert.alert('This action cannot be undone? Are you sure?')
-                        deleteApplication(request?.id)
-                      } catch (error) {
-                        setError(error)
-                      } finally {
-                        setIsDeleting(false);
-                      }
+                      Alert.alert(
+                        'Delete Lease Apt Request',
+                        'This action cannot be undone. Are you sure?',
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          {
+                            text: 'Delete',
+                            style: 'destructive',
+                            onPress: async () => {
+                              setIsDeleting(true);
+                              try {
+                                await deleteApplication(request?.id);
+                                await fetchRequests();
+                              } catch (error) {
+                                setError(error);
+                              } finally {
+                                setIsDeleting(false);
+                              }
+                            }
+                          }
+                        ],
+                        { cancelable: true }
+                      );
                     }}
                     style={styles.removeBanner}
                   >
-                    {isDeleting ? <ActivityIndicator size={5} color='#ffffff' /> : <Text style={{ color: '#fff', fontSize: 12 }}>Cancel</Text>}
+                    {isDeleting ? <ActivityIndicator size={20} color='#ffffff' /> : <Text style={{ color: '#fff', fontSize: 12 }}>Cancel</Text>}
                   </TouchableOpacity>
                 </View>
               </View>
@@ -274,7 +285,11 @@ export default function PropertiesScreen() {
             </View>
 
             {filteredApartments.map((apartment) => (
-              <PropertyCard key={apartment.id} apartment={apartment} />
+              <PropertyCard
+                key={apartment.id}
+                apartment={apartment}
+                onApplicationChange={fetchRequests}
+              />
             ))}
 
             {filteredApartments.length === 0 && (

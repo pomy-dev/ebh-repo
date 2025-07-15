@@ -22,11 +22,12 @@ import { insertTenantApp } from '../services/supabase-services';
 
 interface PropertyCardProps {
   apartment: Apartment;
+  onApplicationChange?: () => void;
 }
 
 const { width: screenWidth } = Dimensions.get('window');
 
-export default function PropertyCard({ apartment }: PropertyCardProps) {
+export default function PropertyCard({ apartment, onApplicationChange }: PropertyCardProps) {
   const [showModal, setShowModal] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showRequestForm, setShowRequestForm] = useState(false);
@@ -94,6 +95,8 @@ export default function PropertyCard({ apartment }: PropertyCardProps) {
         'Your application has been sent to the property owner. You will receive a response within 24-48 hours.',
         [{ text: 'OK', onPress: () => setShowModal(false) }]
       );
+
+      if(onApplicationChange) onApplicationChange();
 
       console.log('Application submitted:', data);
 
