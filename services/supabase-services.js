@@ -130,10 +130,8 @@ export async function insertTenantApp(appDetails, apartmentId) {
   const data = await supabase.from('tenants_applications')
     .insert(
       {
-        name: appDetails?.name,
+        user_id: appDetails?.userId,
         user_title: appDetails?.applicantTitle,
-        email: appDetails?.email,
-        phone: appDetails?.phone,
         employment_status: appDetails?.employmentStatus,
         employer_name: appDetails?.employer,
         numberOfMembers: appDetails?.numberOfMembers,
@@ -197,9 +195,9 @@ export const getApartmentsWithProperty = async () => {
 };
 
 // get tenant application by email
-export async function fetchApplicationByEmail(email) {
-  if (!email) {
-    console.error('Email was not recieved!')
+export async function fetchApplicationByEmail(userId) {
+  if (!userId) {
+    console.error('User Id was not recieved!')
     return;
   }
 
@@ -216,7 +214,7 @@ export async function fetchApplicationByEmail(email) {
         )
       )`
     )
-    .eq('email', email);
+    .eq('user_id', userId);
 
   if (error) {
     console.error(`Error fetching requests of ${email}:`, error);
@@ -233,4 +231,26 @@ export async function deleteApplication(id) {
     .eq('id', id)
 
   if (error) return error;
+}
+
+export async function makeTenant(tenant) {
+  const data = await supabase.from('tenants')
+    .insert({
+      user_id: userId,
+      apt_id: tenant?.apt_id,
+      lease_start_date: tenant?.lease_start_date,
+      lease_end_date: tenant?.lease_end_date,
+      emergency_name: tenant?.emergency_name,
+      emergency_phone: tenant?.emergency_phone,
+      relationship: tenant?.relationship
+    })
+    .select('*')
+    .single();
+
+  if (data.error) {
+    console.error('Error making tenant:', data.error.message);
+    return { data: null, error: data.error };
+  }
+
+  return data;
 }
