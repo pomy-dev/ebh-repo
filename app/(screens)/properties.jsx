@@ -21,7 +21,7 @@ import { useRouter } from "expo-router";
 import { Icons } from "../../constant/icons";
 import { useAuth } from '../../context/app-state/auth-context';
 import PropertyCard from "../../components/property-card";
-import { getApartmentsWithProperty, fetchApplicationByEmail, deleteApplication } from "../../services/supabase-services";
+import { getApartmentsWithProperty, fetchApplicationByEmail, deleteApplication, makeTenant } from "../../services/supabase-services";
 
 export default function PropertiesScreen() {
   const router = useRouter();
@@ -29,6 +29,7 @@ export default function PropertiesScreen() {
   const [apartments, setApartments] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilter, setShowFilter] = useState(false);
+  const [showConditions, setShowConditions] = useState(false);
   const [requests, setRequests] = useState([{}]);
   const [showBanners, setShowBanners] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all'); // Default to 'available'
@@ -36,6 +37,7 @@ export default function PropertiesScreen() {
   const [error, setError] = useState(null);
   const { authState } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isAccepting, setIsAccepting] = useState(false);
 
   const [fontsLoaded] = useFonts({
     "Inter-Regular": Inter_400Regular,
@@ -45,14 +47,68 @@ export default function PropertiesScreen() {
 
   const fetchRequests = async () => {
     if (!authState?.authenticated && !authState?.user) return;
-    const user_email = authState?.user?.email;
+    const userId = authState?.user?.id;
     try {
-      const applications = await fetchApplicationByEmail(user_email);
+      const applications = await fetchApplicationByEmail(userId);
       setRequests(applications);
     } catch (err) {
       setError("Failed to load user apartment requests.");
     }
   };
+
+  const handleMakeTenant = async (request) => {
+    if (!authState?.authenticated && !authState?.user) return;
+    const userId = authState?.user?.id;
+    setIsAccepting(true)
+    try {
+      // const tenantDetails = {
+      //   user_id: userId,
+      //   apt_id: request?.apartment_id,
+      //   lease_start_date: request?.move_id_date,
+      //   lease_end_date: request?.lease_end_date,
+      //   emergency_name: request?.emergency_name,
+      //   emergency_phone: request?.emergency_contact,
+      //   relationship: request?.emergency_relationship
+      // }
+      // const { data: tenant, error: tenantError } = await makeTenant(tenantDetails);
+      // if (tenantError) {
+      //   setError(tenantError)
+      //   return;
+      // }
+
+      // "apartment_id": 35,
+      // "emergency_contact": "79804653", 
+      // "emergency_name": "Njabu Mdluli", 
+      // "emergency_relationship": "Brother",
+      // "lease_end_date": "2/27/2026", 
+      // "move_in_date": "7/18/2025", 
+      // "property_apartments": {"properties": 
+      // {"property_name": "Fair View", 
+      // "property_type": "apartment"},
+      // "unit": "H-L09"}
+      // }
+
+      console.log(request?.apartment_id, request?.emergency_name)
+
+      setIsAccepting(false);
+      // Alert.alert(
+      //   `Welcome to ${request?.properties.property_name},${request?.properties.property_type}`,
+      //   `Your Apartment unit is ${request?.apartment_name}`,
+      //   `And your planned move in date is: ${request?.move_in_date}`,
+      //   [
+      //     {
+      //       text: 'OK',
+      //       style: 'destructive',
+      //     }
+      //   ],
+      //   { cancelable: true }
+      // )
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsAccepting(false);
+    }
+  }
 
   useEffect(() => {
     // fetch apartments
@@ -143,13 +199,13 @@ export default function PropertiesScreen() {
                 <View style={{ marginBottom: 5 }}>
                   <Text style={{ fontFamily: 'Inter-Regular', fontWeight: '700' }}>{request?.property_apartments?.properties?.property_name},{request?.property_apartments?.properties?.property_type}</Text>
 
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Icons.FontAwesome name='home' size={24} color="#73dc83ff" />
                       <Text style={{ fontFamily: 'Inter-Regular', fontSize: 15, color: '#a3a4a6ff' }}>{request?.property_apartments?.unit}</Text>
                     </View>
                     <Text style={[styles.bannerTitle, { backgroundColor: request?.aproval_status === 'pending' ? '#cab049ff' : request?.aproval_status === 'rejected' ? '#cf1a14ff' : '#21cd3bff' }]}>
-                      {request?.aproval_status === 'pending' ? 'pending' : request?.aproval_status === 'rejected' ? 'rejected' : 'approved'}
+                      {request?.aproval_status === 'pending' ? 'pending' : request?.aproval_status === 'rejected' ? 'rejected' : request?.conditions?.length > 0 ? 'approved conditionally' : 'approved'}
                     </Text>
                   </View>
 
@@ -159,21 +215,25 @@ export default function PropertiesScreen() {
                   </View>
                 </View>
 
-                {request?.conditions?.map((condition, index) => (
-                  <Text style={{ color: '#fff' }} key={index}>
-                    {condition}
-                  </Text>
-                ))}
-
                 <Text style={{ fontFamily: 'Inter-Regular', fontSize: 15, color: '#a3a4a6ff', fontWeight: '200' }}>Created at:{new Date(request?.created_at).toLocaleDateString()}</Text>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, alignSelf: 'flex-end', marginBottom: 5 }}>
                   {request?.conditions?.length > 0 && (
                     <TouchableOpacity
-                      onPress={() => { }}
-                      style={styles.accRules}
+                      onPress={() => {
+                        showConditions ? setShowConditions(false) : setShowConditions(true);
+                      }}
+                      style={[styles.btn, { backgroundColor: '#1808f2ff' }]}
                     >
-                      <Text style={{ color: '#fff', fontSize: 12 }}>View Rules</Text>
+                      <Text style={{ color: '#fff', fontSize: 14 }}>{showConditions ? 'Hide Rules' : 'View Rules'}</Text>
+                    </TouchableOpacity>
+                  )}
+                  {request?.aproval_status === 'approved' && (
+                    <TouchableOpacity
+                      onPress={() => handleMakeTenant(request)}
+                      style={[styles.btn, { backgroundColor: '#16c342ff' }]}
+                    >
+                      {isAccepting ? <ActivityIndicator size={15} color='#ffffff' /> : <Text style={{ color: '#fff', fontSize: 14 }}>Accept</Text>}
                     </TouchableOpacity>
                   )}
                   <TouchableOpacity
@@ -202,11 +262,25 @@ export default function PropertiesScreen() {
                         { cancelable: true }
                       );
                     }}
-                    style={styles.removeBanner}
+                    style={[styles.btn, { backgroundColor: '#f20808ff' }]}
                   >
-                    {isDeleting ? <ActivityIndicator size={20} color='#ffffff' /> : <Text style={{ color: '#fff', fontSize: 12 }}>Cancel</Text>}
+                    {isDeleting ? <ActivityIndicator size={15} color='#ffffff' /> : <Text style={{ color: '#fff', fontSize: 14 }}>{request?.aproval_status === 'approved' ? 'Reject' : 'Cancel'}</Text>}
                   </TouchableOpacity>
                 </View>
+
+                {showConditions && (
+                  <>
+                    {request?.conditions?.map((condition, index) => (
+                      <View key={index}>
+                        <Text style={{ color: '#444343ff' }}>
+                          👉🏾{condition}
+                        </Text>
+                      </View>
+
+                    ))}
+                  </>
+                )}
+
               </View>
             ))}
           </ScrollView>
@@ -356,19 +430,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 3
   },
-  removeBanner: {
-    backgroundColor: '#f20808ff',
-    justifyContent: 'center',
-    paddingHorizontal: 5,
-    borderRadius: 50,
-    borderWidth: 1
-  },
-  accRules: {
-    backgroundColor: '#1808f2ff',
+  btn: {
     justifyContent: 'center',
     paddingHorizontal: 5,
     paddingVertical: 1,
-    borderRadius: 50
+    borderRadius: 50,
+    borderWidth: 1
   },
   searchContainer: {
     flexDirection: "row",

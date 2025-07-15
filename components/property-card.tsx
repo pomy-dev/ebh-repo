@@ -66,15 +66,11 @@ export default function PropertyCard({ apartment, onApplicationChange }: Propert
     setLoading(true);
 
     try {
-      const user_email = authState.user?.email
-      const user_phone = authState.user?.user_number
-      const user_name = authState.user?.name
+      const user_id = authState.user?.id
 
       const appDetails = {
         applicantTitle: formData.applicantTitle,
-        email: user_email || '',
-        phone: user_phone || '',
-        name: user_name || '',
+        userId: user_id || '',
         employmentStatus: formData.employmentStatus,
         employer: formData.employer,
         references: formData.references,
@@ -96,7 +92,7 @@ export default function PropertyCard({ apartment, onApplicationChange }: Propert
         [{ text: 'OK', onPress: () => setShowModal(false) }]
       );
 
-      if(onApplicationChange) onApplicationChange();
+      if (onApplicationChange) onApplicationChange();
 
       console.log('Application submitted:', data);
 
@@ -133,8 +129,8 @@ export default function PropertyCard({ apartment, onApplicationChange }: Propert
         </View>
 
         <View style={styles.content}>
-          <Text style={styles.propertyName}>{apartment.propertyName}</Text>
-          <Text style={styles.unit}>Unit {apartment.unit}</Text>
+          <Text style={styles.propertyName}>{apartment.propertyName?.trim()}</Text>
+          <Text style={styles.unit}>Unit {apartment.unit?.trim()}</Text>
 
           <View style={styles.locationRow}>
             <Icons.AntDesign name='enviromento' size={16} color="#6B7280" />
