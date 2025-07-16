@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import Icon from '@expo/vector-icons';
+import { Icons } from '../../constant/icons';
 
 const NotificationsScreen = () => {
   return (
@@ -30,7 +30,7 @@ const NotificationsScreen = () => {
 
           <TouchableOpacity style={styles.notificationCard}>
             <View style={[styles.notificationIcon, { backgroundColor: '#EEF2FF' }]}>
-              <Icon name='payments' size={20} color="#4F46E5" />
+              <Icons.MaterialIcons name='payments' size={20} color="#4F46E5" />
             </View>
             <View style={styles.notificationContent}>
               <View style={styles.notificationHeader}>
@@ -53,7 +53,7 @@ const NotificationsScreen = () => {
 
           <TouchableOpacity style={styles.notificationCard}>
             <View style={[styles.notificationIcon, { backgroundColor: '#F0FDF4' }]}>
-              <Icon name='info' size={20} color="#16A34A" />
+              <Icons.AntDesign name='info' size={20} color="#16A34A" />
             </View>
             <View style={styles.notificationContent}>
               <View style={styles.notificationHeader}>

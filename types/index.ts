@@ -13,7 +13,7 @@ export interface Apartment {
   propertyId: string;
   propertyName: string;
   unit: string;
-  isOccupied: boolean;
+  status: string;
   monthlyRent: number;
   amenities: string[];
   rules: string[];
@@ -23,7 +23,7 @@ export interface Apartment {
   location: string;
   owner: string;
   ownerContact: string;
-  image: string;
+  images: string[];
 }
 
 export interface MaintenanceRequest {
@@ -81,4 +81,25 @@ export interface UserApartment {
   leaseEnd: string;
   location: string;
   image: string;
+}
+
+export interface Application {
+  id: string;
+  apartmentId: number;
+  aprovalStatus: string;
+  conditions: string[];
+  createdAt: string;
+  email: string;
+  emergencyContact: string;
+  emergencyName: string;
+  emergencyRelationship: string;
+  employerName: string;
+  employmentStatus: string;
+  leaseEndDate: string;
+  moveInDate: string;
+  name: string;
+  numberOfMembers: string;
+  phone: string;
+  references: string;
+  userTitle: string;
 }

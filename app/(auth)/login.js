@@ -8,10 +8,8 @@ const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [aptkey, setAptkey] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showAptKey, setShowAptKey] = useState(false);
   const [error, setError] = useState(null);
   const { onLogin } = useAuth();
 
@@ -23,14 +21,11 @@ const Login = () => {
       setLoading(false);
       return;
     }
-    const result = await onLogin(email, password, aptkey);
-    console.log('000000000000000000');
+
+    const result = await onLogin(email, password);
     if (result?.error) {
-      
       setError(result.msg);
       setLoading(false);
-      console.log('-----');
-      console.log(result);
     } else {
       console.log(result || 'Login successful!');
       setLoading(false);
@@ -94,16 +89,6 @@ const Login = () => {
                 <Icons.Ionicons name="eye-outline" size={20} color="#6B7280" />
               )}
             </TouchableOpacity>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Icons.FontAwesome name="key" size={20} color="#6B7280" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Apartment Id"
-              value={aptkey}
-              onChangeText={setAptkey}
-            />
           </View>
 
           <TouchableOpacity onPress={() => router.push('/forgot-password')} style={styles.forgotPassword}>

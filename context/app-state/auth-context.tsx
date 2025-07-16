@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const login = async (email: string, password: string, apartment_id: string) => {
+  const login = async (email: string, password: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -99,7 +99,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (error || !data.session) {
-        
         return { error: true, msg: error?.message || 'Login failed' };
       }
 
@@ -113,9 +112,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('id', decoded.sub)
         .single();
 
-      // If apartment_id is provided, verify it matches
-      if (userRow && apartment_id && userRow.apartment_id && userRow.apartment_id !== apartment_id) {
-        return { error: true, msg: 'Apartment ID does not match our records.' };
+      if (!userRow) {
+        return { error: true, msg: 'User not found. Consider registering!' };
       }
 
       if (userRow) {
@@ -123,26 +121,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           token,
           authenticated: true,
           user: {
-            id: userRow.id,
-            name: userRow.name || null,
-            email: userRow.email || null,
-            user_number: userRow.user_number || null,
-            apartment_id: userRow.apartment_id || null
+            id: userRow?.id,
+            name: userRow?.name || null,
+            email: userRow?.email || null,
+            user_number: userRow?.user_number || null,
+            apartment_id: userRow?.apartment_id || null
           },
         });
       }
-
-      // setAuthState({
-      //   token,
-      //   authenticated: true,
-      //   user: {
-      //     id: userRow?.id || decoded.sub || '',
-      //     name: userRow?.name || '',
-      //     email,
-      //     user_number: userRow?.user_number || '',
-      //     apartment_id: userRow?.apartment_id || null
-      //   },
-      // });
 
       return { error: false, user: userRow };
     } catch (err: any) {

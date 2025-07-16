@@ -47,16 +47,6 @@ export async function getUserIdByEmail(email) {
   return data ? data.id : null; // Return the ID or null if not found
 }
 
-/**
- * Inserts a new maintenance request into the "Maintenance" table.
- */
-
-
-/**
- * Inserts a new maintenance request into the "Maintenance" table.
- */
-
-
 export async function request_maintenance({
   user_id,
   case_title,
@@ -99,7 +89,6 @@ export async function uploadMultipleImages(files) {
   }
 }
 
-
 async function uploadImage(fileUri) {
   try {
     const fileName = fileUri.split('/').pop();
@@ -137,3 +126,146 @@ async function uploadImage(fileUri) {
   }
 }
 
+export async function insertTenantApp(appDetails, apartmentId) {
+  const data = await supabase.from('tenants_applications')
+    .insert(
+      {
+        user_id: appDetails?.userId,
+        user_title: appDetails?.applicantTitle,
+        employment_status: appDetails?.employmentStatus,
+        employer_name: appDetails?.employer,
+        numberOfMembers: appDetails?.numberOfMembers,
+        references: appDetails?.references,
+        emergency_name: appDetails?.emergencyName,
+        emergency_contact: appDetails?.emergencyContact,
+        emergency_relationship: appDetails?.emergencyRelationship,
+        move_in_date: appDetails?.moveInDate,
+        lease_end_date: appDetails?.lease_end_date,
+        apartment_id: apartmentId
+
+      })
+    .select('apartment_id').single();
+
+  if (data.error) {
+    console.error('Error inserting tenant application:', data.error.message);
+    return { data: null, error: data.error };
+  }
+
+  return data;
+}
+
+export const getApartmentsWithProperty = async () => {
+  const { data, error } = await supabase
+    .from('property_apartments')
+    .select(`
+      *,
+      properties (
+        property_name,
+        property_type,
+        street_address,
+        city,
+        amenities,
+        property_image,
+        rules
+      )
+    `);
+
+  if (error) {
+    console.error('Error fetching apartments:', error);
+    return [];
+  }
+
+  return data.map((item) => ({
+    id: item.id,
+    propertyId: item.property_id,
+    propertyName: `${item.properties.property_name}, ${item.properties.property_type.charAt(0).toUpperCase() + item.properties.property_type.slice(1)}`,
+    unit: item.unit,
+    status: item.status,
+    monthlyRent: item.monthly_rent,
+    amenities: item.properties.amenities,
+    rules: item.properties.rules,
+    bedrooms: item.numberOfbedRooms || 0,
+    bathrooms: item.numberOfBath || 0,
+    squareFeet: item.squareFeet || 0,
+    location: item.properties.street_address + ', ' + item.properties.city,
+    owner: item?.owner || 'N/A',
+    ownerContact: item?.ownerContact || '',
+    images: item.unitImages || [], // Assuming unitImages is an array of image URLs
+  }));
+};
+
+// get tenant application by email
+export async function fetchApplicationByEmail(userId) {
+  if (!userId) {
+    console.error('User Id was not recieved!')
+    return;
+  }
+
+  const { data, error } = await supabase.from('tenants_applications')
+    .select(`
+      *,
+      property_apartments (
+        unit,
+        properties (
+        property_name,
+        property_type,
+        street_address,
+        city
+        )
+      )`
+    )
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error(`Error fetching requests of ${email}:`, error);
+    return [];
+  }
+
+  return data;
+}
+
+export async function deleteApplication(id) {
+  const { error } = await supabase
+    .from('tenants_applications')
+    .delete()
+    .eq('id', id)
+
+  if (error) return error;
+}
+
+export async function makeTenant(tenant) {
+  const data = await supabase.from('tenants')
+    .insert({
+      user_id: tenant?.user_id,
+      apt_id: tenant?.apt_id,
+      lease_start_date: tenant?.lease_start_date,
+      lease_end_date: tenant?.lease_end_date,
+      emergency_name: tenant?.emergency_name,
+      emergency_phone: tenant?.emergency_phone,
+      relationship: tenant?.relationship
+    })
+    .select()
+    .single();
+
+  if (data.error) {
+    console.error('Error making tenant:', data.error.message);
+    return { data: null, error: data.error };
+  }
+
+  return data;
+}
+
+export async function updateUser(tenant) {
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({ apartment_id: tenant?.apt_id })
+    .eq('id', tenant?.user_id)
+    .select();
+
+  if (error) {
+    console.error('Error updating user apartment Id:', error);
+    return error;
+  }
+  return data;
+}
