@@ -78,51 +78,39 @@ export async function request_maintenance({
   return data;
 }
 
-export async function uploadMultipleImages(files) {
+export async function uploadImage(path, file) {
   try {
-    const uploadPromises = files.map(file => uploadImage(file));
-    const publicUrls = await Promise.all(uploadPromises);
-    return publicUrls; // Array of public URLs
-  } catch (error) {
-    console.error("Failed to upload multiple images:", error.message);
-    throw error;
-  }
-}
-
-async function uploadImage(fileUri) {
-  try {
-    const fileName = fileUri.split('/').pop();
-    const filePath = `uploads/${Date.now()}_${fileName}`;
-
-    const response = await fetch(fileUri);
+    // Fetch the file as a Blob
+    const response = await fetch(file.uri);
     const blob = await response.blob();
-    const mimeType = blob.type || 'image/jpeg';
 
-    const { error: uploadError } = await supabase.storage
-      .from('evidence-images')
-      .upload(filePath, blob, { contentType: mimeType });
+    // uniquely name the file
+    const fileName = `${Date.now()}-${file.name}`;
+    path = `${path}/${fileName}`; // Ensure the path includes the file name
 
-    if (uploadError) {
-      console.error('Error uploading image:', uploadError.message);
-      throw uploadError;
+    // Upload the file to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from("evidence-images") // Replace with your actual bucket name
+      .upload(path, file, {
+        cacheControl: "3600",
+        upsert: false, // Set to true if you want to overwrite existing files
+        contentType: file.mimeType || "application/octet-stream",
+      });
+
+    if (error) {
+      throw new Error(`Error uploading file: ${error.message}`);
     }
 
-    const { data, error: urlError } = await supabase.storage
-      .from('evidence-images')
-      .createSignedUrl(filePath, 60 * 60); // 1 hour
+    // Retrieve the public URL of the uploaded file
+    const { data: publicUrlData } = supabase.storage
+      .from("evidence-images")
+      .getPublicUrl(path);
 
-    if (urlError) {
-      console.error('Error getting image URL:', urlError.message);
-      throw urlError;
-    }
+    return publicUrlData.publicUrl;
 
-    return {
-      signedUrl: data.signedUrl,
-      path: filePath
-    };
   } catch (error) {
-    console.error('Upload failed:', error.message);
-    throw error;
+    console.error("Upload failed:", error);
+    return null;
   }
 }
 
@@ -265,6 +253,32 @@ export async function updateUser(tenant) {
 
   if (error) {
     console.error('Error updating user apartment Id:', error);
+    return error;
+  }
+  return data;
+}
+
+export async function apartmentUserDetails(userId) {
+  const { data, error } = await supabase
+    .from('tenants')
+    .select(`
+      lease_start_date,
+      lease_end_date,
+      property_apartments (
+        unit,
+        unitImages,
+        monthly_rent,
+        properties (
+          property_name,
+          property_type
+        )
+      )
+    `)
+    .eq('user_id', userId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching tenant details:', error);
     return error;
   }
   return data;
