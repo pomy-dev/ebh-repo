@@ -76,7 +76,7 @@ const NotificationsScreen = () => {
 
           <TouchableOpacity style={styles.notificationCard}>
             <View style={[styles.notificationIcon, { backgroundColor: '#D1FAE5' }]}>
-              <Icon name='check-circle' size={20} color="#059669" />
+              <Icons.Feather name='check-circle' size={20} color="#059669" />
             </View>
             <View style={styles.notificationContent}>
               <View style={styles.notificationHeader}>
@@ -96,7 +96,7 @@ const NotificationsScreen = () => {
 
           <TouchableOpacity style={styles.notificationCard}>
             <View style={[styles.notificationIcon, { backgroundColor: '#DBEAFE' }]}>
-              <Icon name='clipboard-list-outline' size={20} color="#2563EB" />
+              <Icons.FontAwesome5 name='clipboard-list' size={20} color="#2563EB" />
             </View>
             <View style={styles.notificationContent}>
               <View style={styles.notificationHeader}>
@@ -119,7 +119,7 @@ const NotificationsScreen = () => {
 
           <TouchableOpacity style={styles.notificationCard}>
             <View style={[styles.notificationIcon, { backgroundColor: '#FEF3C7' }]}>
-              <Icon name='bells' size={20} color="#D97706" />
+              <Icons.AntDesign name='bells' size={20} color="#D97706" />
             </View>
             <View style={styles.notificationContent}>
               <View style={styles.notificationHeader}>
@@ -149,7 +149,7 @@ const NotificationsScreen = () => {
         >
           <TouchableOpacity style={styles.viewMoreButton}>
             <Text style={styles.viewMoreText}>View Older Notifications</Text>
-            <Icon name='chevron-forward' size={16} color="#4F46E5" />
+            <Icons.Ionicons name='chevron-forward' size={16} color="#4F46E5" />
           </TouchableOpacity>
         </View>
       </ScrollView>

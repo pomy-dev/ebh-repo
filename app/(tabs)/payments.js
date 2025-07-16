@@ -34,19 +34,13 @@ const PaymentsScreen = () => {
   const [payments, setPayments] = useState([]);
   const [user_id, setUser_id] = useState("");
 
-  //paying variables
   //temporaly catch the method before change
   const router = useRouter();
   const { authState } = useAuth();
-  const { name, email, user_number } = authState.user;
-
-  //store payment data globaly
-
-  //load data when page loads
 
   useEffect(() => {
     const fetchPayments = async () => {
-      const userId = await getUserIdByEmail(email);
+      const userId = authState?.user?.id;
       setUser_id(userId); // Set the user ID state
 
       // Fetch payments for the user
@@ -75,7 +69,6 @@ const PaymentsScreen = () => {
       .select();
 
     if (error) {
-      console.log("errorrrrrrrrrrrrrr");
       setShowSheet2(false);
     } else {
       setTimeout(() => {
@@ -194,6 +187,7 @@ const PaymentsScreen = () => {
         </View>
       );
     }
+
     if (selectedMethod === "insta") {
       return (
         <View style={styles.container}>
@@ -248,6 +242,7 @@ const PaymentsScreen = () => {
         </View>
       );
     }
+
     if (selectedMethod === "confirm") {
       return (
         <View style={[styles.container, { justifyContent: "center" }]}>
@@ -278,6 +273,7 @@ const PaymentsScreen = () => {
         </View>
       );
     }
+
     if (selectedMethod === "cash") {
       return <Text>No info needed. Pay with cash at delivery.</Text>;
     }
