@@ -138,7 +138,7 @@ export default function PropertyCard({ apartment, onApplicationChange }: Propert
           </View>
 
           <View style={styles.priceRow}>
-            <Icons.MaterialIcons name='attach-money' size={20} color="#059669" />
+            <Icons.MaterialIcons name='attach-money' size={20} color="#1216eeff" />
             <Text style={styles.price}>{apartment.monthlyRent}/month</Text>
           </View>
 
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#059669',
+    color: '#3e38f5ff',
     marginLeft: 4,
   },
   detailsRow: {

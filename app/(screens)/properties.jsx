@@ -21,7 +21,7 @@ import { useRouter } from "expo-router";
 import { Icons } from "../../constant/icons";
 import { useAuth } from '../../context/app-state/auth-context';
 import PropertyCard from "../../components/property-card";
-import { getApartmentsWithProperty, fetchApplicationByEmail, deleteApplication, makeTenant } from "../../services/supabase-services";
+import { getApartmentsWithProperty, fetchApplicationByEmail, deleteApplication, makeTenant, updateUser } from "../../services/supabase-services";
 
 export default function PropertiesScreen() {
   const router = useRouter();
@@ -61,50 +61,41 @@ export default function PropertiesScreen() {
     const userId = authState?.user?.id;
     setIsAccepting(true)
     try {
-      // const tenantDetails = {
-      //   user_id: userId,
-      //   apt_id: request?.apartment_id,
-      //   lease_start_date: request?.move_id_date,
-      //   lease_end_date: request?.lease_end_date,
-      //   emergency_name: request?.emergency_name,
-      //   emergency_phone: request?.emergency_contact,
-      //   relationship: request?.emergency_relationship
-      // }
-      // const { data: tenant, error: tenantError } = await makeTenant(tenantDetails);
-      // if (tenantError) {
-      //   setError(tenantError)
-      //   return;
-      // }
-
-      // "apartment_id": 35,
-      // "emergency_contact": "79804653", 
-      // "emergency_name": "Njabu Mdluli", 
-      // "emergency_relationship": "Brother",
-      // "lease_end_date": "2/27/2026", 
-      // "move_in_date": "7/18/2025", 
-      // "property_apartments": {"properties": 
-      // {"property_name": "Fair View", 
-      // "property_type": "apartment"},
-      // "unit": "H-L09"}
-      // }
-
-      console.log(request?.apartment_id, request?.emergency_name)
-
+      const tenantDetails = {
+        user_id: userId,
+        apt_id: request?.apartment_id,
+        lease_start_date: request?.move_in_date,
+        lease_end_date: request?.lease_end_date,
+        emergency_name: request?.emergency_name,
+        emergency_phone: request?.emergency_contact,
+        relationship: request?.emergency_relationship
+      }
+      const { data, error } = await makeTenant(tenantDetails);
+      if (error) {
+        setError(tenantError)
+        return;
+      }
+      console.log(data)
       setIsAccepting(false);
-      // Alert.alert(
-      //   `Welcome to ${request?.properties.property_name},${request?.properties.property_type}`,
-      //   `Your Apartment unit is ${request?.apartment_name}`,
-      //   `And your planned move in date is: ${request?.move_in_date}`,
-      //   [
-      //     {
-      //       text: 'OK',
-      //       style: 'destructive',
-      //     }
-      //   ],
-      //   { cancelable: true }
-      // )
+      Alert.alert(
+        `Welcome Tenant ${authState?.user?.name} 🤗, to ${request?.property_apartments?.properties?.property_name}, ${request?.property_apartments?.properties?.property_type}`,
+        `Your Apartment unit is ${request?.property_apartments?.unit}\nAnd your planned move in date is: ${request?.move_in_date}`,
+        [{
+          text: 'OK',
+          onPress: (async () => {
+            const updatedUser = await updateUser(data)
+            if (updatedUser) {
+              router.push('/(tabs)')
+            } else {
+              alert('Something went wrong! Could not redirect you to your dashboard')
+            }
+          }),
+          style: 'destructive'
+        }],
+        { cancelable: true }
+      )
     } catch (error) {
-      setError(error);
+      console.log(error)
     } finally {
       setIsAccepting(false);
     }
@@ -197,7 +188,7 @@ export default function PropertiesScreen() {
                 style={[styles.banner, { width: screenWidth * 0.8 }]}
               >
                 <View style={{ marginBottom: 5 }}>
-                  <Text style={{ fontFamily: 'Inter-Regular', fontWeight: '700' }}>{request?.property_apartments?.properties?.property_name},{request?.property_apartments?.properties?.property_type}</Text>
+                  <Text style={{ fontFamily: 'Inter-Regular', fontWeight: '700' }}>{request?.property_apartments?.properties?.property_name}, {request?.property_apartments?.properties?.property_type}</Text>
 
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

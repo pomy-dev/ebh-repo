@@ -236,7 +236,7 @@ export async function deleteApplication(id) {
 export async function makeTenant(tenant) {
   const data = await supabase.from('tenants')
     .insert({
-      user_id: userId,
+      user_id: tenant?.user_id,
       apt_id: tenant?.apt_id,
       lease_start_date: tenant?.lease_start_date,
       lease_end_date: tenant?.lease_end_date,
@@ -244,7 +244,7 @@ export async function makeTenant(tenant) {
       emergency_phone: tenant?.emergency_phone,
       relationship: tenant?.relationship
     })
-    .select('*')
+    .select()
     .single();
 
   if (data.error) {
@@ -252,5 +252,20 @@ export async function makeTenant(tenant) {
     return { data: null, error: data.error };
   }
 
+  return data;
+}
+
+export async function updateUser(tenant) {
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({ apartment_id: tenant?.apt_id })
+    .eq('id', tenant?.user_id)
+    .select();
+
+  if (error) {
+    console.error('Error updating user apartment Id:', error);
+    return error;
+  }
   return data;
 }

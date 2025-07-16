@@ -112,9 +112,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('id', decoded.sub)
         .single();
 
-      // If apartment_id is provided, verify it matches
-      if (userRow && userRow.apartment_id) {
-        return { error: true, msg: 'Apartment ID was not found.' };
+      if (!userRow) {
+        return { error: true, msg: 'User not found. Consider registering!' };
       }
 
       if (userRow) {
@@ -122,11 +121,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           token,
           authenticated: true,
           user: {
-            id: userRow.id,
-            name: userRow.name || null,
-            email: userRow.email || null,
-            user_number: userRow.user_number || null,
-            apartment_id: userRow.apartment_id || null
+            id: userRow?.id,
+            name: userRow?.name || null,
+            email: userRow?.email || null,
+            user_number: userRow?.user_number || null,
+            apartment_id: userRow?.apartment_id || null
           },
         });
       }
