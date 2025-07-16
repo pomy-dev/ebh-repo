@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import Icon  from 'react-native-vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 
 export default function LandingScreen() {
@@ -8,7 +7,6 @@ export default function LandingScreen() {
 
   return (
     <View style={styles.container}>
-
 
       <Image source={require('../assets/logo.png')} style={styles.logo} />
 

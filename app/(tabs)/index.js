@@ -23,7 +23,7 @@ const HomeScreen = () => {
   }
 
   const router = useRouter();
-  const { name, email, user_number } = authState.user;
+  const { name } = authState.user;
 
   return (
     <View style={styles.container}>
@@ -170,13 +170,14 @@ const HomeScreen = () => {
         </View>
       </ScrollView>
     </View>
+    // </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F9FAFB'
   },
   centered: {
     flex: 1,
