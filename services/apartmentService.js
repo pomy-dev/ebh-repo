@@ -43,3 +43,22 @@ export const getApartmentsWithProperty = async () => {
     image: item.properties.property_image
   }));
 };
+
+
+// export const getApartmentsImages = async () => {
+
+
+//   const { data, error } = await supabase
+//     .storage
+//     .from('evidence-images')
+//     .list('apartments', {
+//       limit: 100,
+//       offset: 0,
+//     })
+
+//     if(error) {return error}
+
+//     return data; 
+
+
+// }
