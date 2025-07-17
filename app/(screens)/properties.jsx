@@ -59,8 +59,11 @@ export default function PropertiesScreen() {
   const handleMakeTenant = async (request) => {
     if (!authState?.authenticated && !authState?.user) return;
     const userId = authState?.user?.id;
+
     setIsAccepting(true)
+    
     try {
+
       const tenantDetails = {
         user_id: userId,
         apt_id: request?.apartment_id,
@@ -70,11 +73,14 @@ export default function PropertiesScreen() {
         emergency_phone: request?.emergency_contact,
         relationship: request?.emergency_relationship
       }
+
       const { data, error } = await makeTenant(tenantDetails);
+
       if (error) {
         setError(tenantError)
         return;
       }
+
       console.log(data)
       setIsAccepting(false);
       Alert.alert(

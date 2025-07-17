@@ -48,28 +48,26 @@ export async function getUserIdByEmail(email) {
 }
 
 export async function request_maintenance({
-  user_id,
+  tenant_id,
   case_title,
   description,
-  files_url = [],
-  created_at,
+  imageUrls = [],
   status = 'pending'
 }) {
 
   const { data, error } = await supabase
     .from('maintenance')
     .insert({
-      user_id,
+      tenant_id,
       case_title,
       description,
-      images: files_url,
-      created_at,
+      images: imageUrls,
       status,
     }).select()
     .single();
 
   if (error) {
-    console.error('Error creating marketplace application:', error.message);
+    console.error('Error inserting maintenance request:', error.message);
     throw error;
   }
 
@@ -247,7 +245,7 @@ export async function updateUser(tenant) {
 
   const { data, error } = await supabase
     .from('users')
-    .update({ apartment_id: tenant?.apt_id })
+    .update({ tenant_id: tenant?.id })
     .eq('id', tenant?.user_id)
     .select();
 

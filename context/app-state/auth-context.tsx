@@ -20,7 +20,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [authState, setAuthState] = useState<{ token: string | null; authenticated: boolean | null; user?: { id: string; name: string; email: string; user_number?: number | null, apartment_id?: string | null } }>({ token: null, authenticated: null, user: undefined });
+  const [authState, setAuthState] = useState<{ token: string | null; authenticated: boolean | null; user?: { id: string; name: string; email: string; user_number?: number | null, tenant_id?: string | null } }>({ token: null, authenticated: null, user: undefined });
   const [paymentData, setPaymentData] = useState(null);
 
   // 👇 Restore user session on app startup
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const { data: userRow, error } = await supabase
         .from('users')
-        .select('id, name, email, user_number, apartment_id')
+        .select('id, name, email, user_number, tenant_id')
         .eq('id', decoded.sub)
         .single();
 
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             name: userRow.name || null,
             email: userRow.email || null,
             user_number: userRow.user_number || null,
-            apartment_id: userRow.apartment_id || null
+            tenant_id: userRow.tenant_id || null
           },
         });
       }
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const register = async (name: string, email: string, user_number: number, password: string, apartment_id?: string) => {
+  const register = async (name: string, email: string, user_number: number, password: string) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const { error: insertError } = await supabase
           .from('users')
-          .insert([{ id: userId, name, email, user_number, apartment_id: null }]);
+          .insert([{ id: userId, name, email, user_number, tenant_id: null }]);
 
         if (insertError) {
           console.error('Error inserting user:', insertError.message)
@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const { data: userRow } = await supabase
         .from('users')
-        .select('id, name, email, user_number, apartment_id')
+        .select('id, name, email, user_number, tenant_id')
         .eq('id', decoded.sub)
         .single();
 
@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             name: userRow?.name || null,
             email: userRow?.email || null,
             user_number: userRow?.user_number || null,
-            apartment_id: userRow?.apartment_id || null
+            tenant_id: userRow?.tenant_id || null
           },
         });
       }
@@ -165,6 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
       if (token) {
@@ -172,7 +173,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const decoded: any = jwtDecode(token);
           const { data: userRow } = await supabase
             .from('users')
-            .select('id, name, email, user_number, apartment_id')
+            .select('id, name, email, user_number, tenant_id')
             .eq('id', decoded.sub)
             .single();
 
@@ -185,15 +186,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 name: userRow.name,
                 email: userRow.email,
                 user_number: userRow.user_number,
-                apartment_id: userRow.apartment_id || null
+                tenant_id: userRow.tenant_id || null
               },
             });
           }
+
         } catch (err) {
           console.error('Token decode failed:', err);
         }
       }
     };
+
     loadUser();
     loadToken();
   }, []);
