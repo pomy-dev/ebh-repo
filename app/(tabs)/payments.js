@@ -34,32 +34,38 @@ const PaymentsScreen = () => {
   const [payments, setPayments] = useState([]);
   const [user_id, setUser_id] = useState("");
 
-  //paying variables
-  //temporaly catch the method before change
   const router = useRouter();
   const { authState } = useAuth();
-  const { name, email, user_number } = authState.user;
+  const { name, email, user_number } = authState?.user;
 
-  //store payment data globaly
+  const getTennantID = async () => {
+    const { data: tenants, error: tenantError } = await supabase
+      .from("tenants")
+      .select("id")
+      .eq("user_id", authState?.user?.id)
+      .single();
 
-  //load data when page loads
+    if (tenantError || !tenants) {
+      console.error("Tenant not found");
+      return;
+    }
+
+    return tenants.id;
+  };
 
   useEffect(() => {
     const fetchPayments = async () => {
-      const userId = await getUserIdByEmail(email);
-      setUser_id(userId); // Set the user ID state
-
+      const tenantId = await getTennantID();
       // Fetch payments for the user
       const { data, error } = await supabase
         .from("payments")
         .select("*")
-        .eq("user_id", userId); // Use userId from the fetched value
+        .eq("tenant_id", tenantId);
 
       if (error) {
         console.error("Error fetching payments:", error);
       } else {
         setPayments(data);
-
         setTransactionStatus(false); // Set the payments state
       }
     };
@@ -69,13 +75,21 @@ const PaymentsScreen = () => {
 
   const savePayment = async () => {
     let method = selectedMethod2;
+    const tenantId = await getTennantID();
     const { data, error } = await supabase
       .from("payments")
-      .insert({ user_id, month, amount, method, account, reference })
+      .insert({
+        month,
+        amount,
+        method,
+        account,
+        reference,
+        updated_at: new Date().toISOString(),
+        tenant_id: tenantId,
+      })
       .select();
 
     if (error) {
-      console.log("errorrrrrrrrrrrrrr");
       setShowSheet2(false);
     } else {
       setTimeout(() => {
