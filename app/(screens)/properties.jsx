@@ -21,7 +21,15 @@ import { useRouter } from "expo-router";
 import { Icons } from "../../constant/icons";
 import { useAuth } from '../../context/app-state/auth-context';
 import PropertyCard from "../../components/property-card";
-import { getApartmentsWithProperty, fetchApplicationByEmail, deleteApplication, makeTenant, updateUser } from "../../services/supabase-services";
+import {
+  getApartmentsWithProperty,
+  fetchApplicationByEmail,
+  deleteApplication,
+  makeTenant,
+  updateUser,
+  updateAcceptedApartment,
+  deleteTenantApp
+} from "../../services/supabase-services";
 
 export default function PropertiesScreen() {
   const router = useRouter();
@@ -59,7 +67,6 @@ export default function PropertiesScreen() {
   const handleMakeTenant = async (request) => {
     if (!authState?.authenticated && !authState?.user) return;
     const userId = authState?.user?.id;
-
     setIsAccepting(true)
 
     try {
@@ -91,7 +98,9 @@ export default function PropertiesScreen() {
           onPress: (async () => {
             const updatedUser = await updateUser(data)
             if (updatedUser) {
-              router.push('/(tabs)')
+              const aptUpdated = await updateAcceptedApartment(request?.apartment_id)
+              aptUpdated ? router.push('/(tabs)') : setError('Apartment Accepted was not updated as Occupied. Check the owner!');
+              await deleteTenantApp(request?.id)
             } else {
               alert('Something went wrong! Could not redirect you to your dashboard')
             }

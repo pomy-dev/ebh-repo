@@ -140,6 +140,15 @@ export async function insertTenantApp(appDetails, apartmentId) {
   return data;
 }
 
+export async function deleteTenantApp(id) {
+  const { error } = await supabase
+    .from('tenants_applications')
+    .delete()
+    .eq('id', id)
+
+  if (error) return error;
+}
+
 export const getApartmentsWithProperty = async () => {
   const { data, error } = await supabase
     .from('property_apartments')
@@ -237,6 +246,19 @@ export async function makeTenant(tenant) {
     console.error('Error making tenant:', data.error.message);
     return { data: null, error: data.error };
   }
+
+  return data;
+}
+
+export async function updateAcceptedApartment(apt_id) {
+
+  const { data, error } = await supabase
+    .from('property_apartments')
+    .update({ status: 'occupied' })
+    .eq('id', apt_id)
+    .select()
+
+  if (error) return error;
 
   return data;
 }
