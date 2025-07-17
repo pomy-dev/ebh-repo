@@ -61,7 +61,7 @@ export default function PropertiesScreen() {
     const userId = authState?.user?.id;
 
     setIsAccepting(true)
-    
+
     try {
 
       const tenantDetails = {
@@ -164,7 +164,7 @@ export default function PropertiesScreen() {
             style={{ marginLeft: "auto", padding: 6 }}
             disabled={!requests || requests.length === 0}
           >
-            <Icons.Ionicons name="notifications-outline" size={24} color={requests?.length > 0 ? "#08dd4cff" : "#b2b0b0ff"} />
+            <Icons.AntDesign name="bells" size={24} color={requests?.length > 0 ? "#08dd4cff" : "#b2b0b0ff"} />
             {requests && requests.length > 0 && (
               <View style={styles.notice}>
                 <Text style={{ color: "#FFFFFF" }}>{requests?.length}</Text>
@@ -198,7 +198,7 @@ export default function PropertiesScreen() {
 
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Icons.FontAwesome name='home' size={24} color="#73dc83ff" />
+                      <Icons.FontAwesome name='home' size={24} color="#1e17f2ff" />
                       <Text style={{ fontFamily: 'Inter-Regular', fontSize: 15, color: '#a3a4a6ff' }}>{request?.property_apartments?.unit}</Text>
                     </View>
                     <Text style={[styles.bannerTitle, { backgroundColor: request?.aproval_status === 'pending' ? '#cab049ff' : request?.aproval_status === 'rejected' ? '#cf1a14ff' : '#21cd3bff' }]}>
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#0de848ff'
+    borderColor: '#c4c5c5ff'
   },
   bannerTitle: {
     color: '#ffffff',
@@ -431,8 +431,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 5,
     paddingVertical: 1,
-    borderRadius: 50,
-    borderWidth: 1
+    borderRadius: 50
   },
   searchContainer: {
     flexDirection: "row",

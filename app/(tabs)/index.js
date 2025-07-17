@@ -7,7 +7,7 @@ import { apartmentUserDetails } from '../../services/supabase-services'
 
 const HomeScreen = () => {
   const { authState } = useAuth();
-  const [tenantDetails, setTenantDetails] = useState({})
+  const [tenantDetails, setTenantDetails] = useState([])
 
   if (!authState || authState.authenticated === null) {
     return (
@@ -33,7 +33,7 @@ const HomeScreen = () => {
         return;
       };
 
-      setTenantDetails(tenantInfo)
+      setTenantDetails(tenantInfo[0])
     }
 
     fetchTenantInfo();

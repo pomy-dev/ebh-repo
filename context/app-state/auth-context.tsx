@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabase-client';
 
 interface AuthProps {
-  authState?: { token: string | null; authenticated: boolean | null; user?: { id: string, name: string; email: string; user_number?: number | null } };
+  authState?: { token: string | null; authenticated: boolean | null; user?: { id: string, name: string; email: string; user_number?: number | null, tenant_id?: string | null } };
   onRegister?: (name: string, email: string, user_number: number, password1: string, password2: string) => Promise<any>;
   onLogin?: (email: string, password: string, apartment_id: string) => Promise<any>;
   onLogout?: () => Promise<any>;
@@ -165,7 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    
+
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
       if (token) {
