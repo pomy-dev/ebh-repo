@@ -286,6 +286,7 @@ export async function apartmentUserDetails(userId) {
       lease_start_date,
       lease_end_date,
       property_apartments (
+        id,
         unit,
         unitImages,
         monthly_rent,

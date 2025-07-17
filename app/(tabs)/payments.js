@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect  } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import {
 import { Icons } from "../../constant/icons";
 import BottomSheetModal from "../../components/bottom-sheet";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
+import { usePaymentContext } from "../../context/app-state/PaymentContext";
 
 // local modules
 import { supabase } from "../../utils/supabase-client";
@@ -38,6 +40,8 @@ const PaymentsScreen = () => {
   const { authState } = useAuth();
   const { name, email, user_number } = authState?.user;
 
+  const {tenantID } = usePaymentContext();
+
  
 
   useEffect(() => {
@@ -46,7 +50,7 @@ const PaymentsScreen = () => {
       const { data, error } = await supabase
         .from("payments")
         .select("*")
-        .eq("tenant_id", authState?.user?.tenant_id);
+        .eq("tenant_id", tenantID?.id);
 
       if (error) {
         console.error("Error fetching payments:", error);
@@ -59,6 +63,28 @@ const PaymentsScreen = () => {
     fetchPayments(); // Initial fetch
   }, [transactionStatus]);
 
+useFocusEffect(
+  React.useCallback(() => {
+    const fetchPayments = async () => {
+      if (!tenantID?.id) return; // safeguard
+      const { data, error } = await supabase
+        .from("payments")
+        .select("*")
+        .eq("tenant_id", tenantID.id);
+
+      if (error) {
+        console.error("Error fetching payments:", error);
+      } else {
+        setPayments(data);
+        setTransactionStatus(false);
+      }
+    };
+
+    fetchPayments();
+  }, [tenantID?.id, transactionStatus])
+);
+
+
   const savePayment = async () => {
     let method = selectedMethod2;
     const { data, error } = await supabase
@@ -70,7 +96,8 @@ const PaymentsScreen = () => {
         account,
         reference,
         updated_at: new Date().toISOString(),
-        tenant_id: authState?.user?.tenant_id,
+        tenant_id: tenantID?.id,
+        apt_id: tenantID?.aptId,
       })
       .select();
 
