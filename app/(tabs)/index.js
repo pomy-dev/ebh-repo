@@ -25,7 +25,6 @@ const HomeScreen = () => {
   const shimmerAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Shimmer animation loop
     const shimmer = Animated.loop(
       Animated.timing(shimmerAnim, {
         toValue: 1,
