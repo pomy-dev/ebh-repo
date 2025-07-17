@@ -98,7 +98,9 @@ export default function PropertiesScreen() {
           onPress: (async () => {
             const updatedUser = await updateUser(data)
             if (updatedUser) {
-              router.push('/(tabs)')
+              const aptUpdated = await updateAcceptedApartment(request?.apartment_id)
+              aptUpdated ? router.push('/(tabs)') : setError('Apartment Accepted was not updated as Occupied. Check the owner!');
+              await deleteTenantApp(request?.id)
             } else {
               alert('Something went wrong! Could not redirect you to your dashboard')
             }
@@ -113,10 +115,6 @@ export default function PropertiesScreen() {
       setIsAccepting(false);
     }
   }
-
-  // const handleDeleteTenantApp = async (apt_id) => {
-
-  // }
 
   useEffect(() => {
     // fetch apartments

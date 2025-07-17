@@ -254,7 +254,7 @@ export async function updateAcceptedApartment(apt_id) {
 
   const { data, error } = await supabase
     .from('property_apartments')
-    .update({ status: 'approved' })
+    .update({ status: 'occupied' })
     .eq('id', apt_id)
     .select()
 
