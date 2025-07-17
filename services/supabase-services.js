@@ -76,6 +76,21 @@ export async function request_maintenance({
   return data;
 }
 
+export async function getMaintenanceRequestsByTenantId(tenant_id) {
+
+  const { data, error } = await supabase
+    .from('maintenance')
+    .select('*').eq('tenant_id', tenant_id);
+
+  if (error) {
+    console.error('Error fetching queries:', error.message);
+    throw error;
+  }
+  // console.log(data)
+
+  return data;
+}
+
 export async function uploadImage(path, file) {
   try {
     // Fetch the file as a Blob
