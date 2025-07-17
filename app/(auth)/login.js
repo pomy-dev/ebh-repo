@@ -15,7 +15,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     setLoading(true);
-    // Basic validation
+
     if (!email || !password) {
       setError('Email and password are required');
       setLoading(false);
@@ -23,15 +23,18 @@ const Login = () => {
     }
 
     const result = await onLogin(email, password);
+
     if (result?.error) {
+
       setError(result.msg);
       setLoading(false);
+
     } else {
+
       console.log(result || 'Login successful!');
       setLoading(false);
-      // Check if user has an apartment assigned
-      // const { authState } = useAuth();
-      if (result?.user?.apartment_id) {
+
+      if (result?.user?.tenant_id) {
         router.push('/(tabs)');
       } else {
         router.push('/(screens)/properties');

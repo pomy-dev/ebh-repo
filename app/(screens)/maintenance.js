@@ -154,17 +154,20 @@ const Maintenance = () => {
             }
 
             const userId = authState.user.id;
-            console.log('User Loggin UUID:', userId)
+            console.log('User UUID:', userId)
 
-            const imageUrls = await Promise.all(images.map(file => {
-                const httpsUrl = uploadImage('uploads', file)
+            const imageUrls = await Promise.all(images.map(async (file) => {
+                const httpsUrl = await uploadImage('uploads', file)
+
+                if (!httpsUrl) {
+                    console.error("Failed to upload image");
+                    return null;
+                }
+
                 return httpsUrl;
-            }))
-            const files_url = imageUrls.map(result => result.url);
-            files_url.forEach((url, index) => {
-                console.log(`Image [${index}] => ${url}`)
-            })
-            const submitData = { user_id: userId, case_title: title, description, files_url };
+            }));
+
+            const submitData = { tenant_id: userId, case_title: title, description, imageUrls: imageUrls?.filter(url => url !== null) };
 
             const data = await request_maintenance(submitData);
 
