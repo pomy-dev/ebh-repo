@@ -153,8 +153,8 @@ const Maintenance = () => {
                 return;
             }
 
-            const userId = authState.user.id;
-            console.log('User UUID:', userId)
+            const tenantId = authState.user.tenant_id;
+            console.log('Tenant Id:', tenantId)
 
             const imageUrls = await Promise.all(images.map(async (file) => {
                 const httpsUrl = await uploadImage('uploads', file)
@@ -167,7 +167,7 @@ const Maintenance = () => {
                 return httpsUrl;
             }));
 
-            const submitData = { tenant_id: userId, case_title: title, description, imageUrls: imageUrls?.filter(url => url !== null) };
+            const submitData = { tenant_id: tenantId, case_title: title, description, imageUrls: imageUrls?.filter(url => url !== null) };
 
             const data = await request_maintenance(submitData);
 
@@ -276,14 +276,11 @@ const Maintenance = () => {
                         onPress={handleSubmit}
                         disabled={loading}
                     >
-                        {loading ? (
-                            <ActivityIndicator color="#FFFFFF" />
-                        ) : (
-                            <View style={styles.buttonContent}>
-                                <Icons.Ionicons name='send-outline' size={20} color="#FFFFFF" style={styles.buttonIcon} />
-                                <Text style={styles.buttonText}>Submit Request</Text>
-                            </View>
-                        )}
+
+                        <View style={styles.buttonContent}>
+                            {loading ? <ActivityIndicator color="#FFFFFF" /> : <Icons.Ionicons name='send-outline' size={20} color="#FFFFFF" style={styles.buttonIcon} />}
+                            <Text style={styles.buttonText}>Submit Request</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>

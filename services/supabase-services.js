@@ -83,7 +83,7 @@ export async function uploadImage(path, file) {
     const blob = await response.blob();
 
     // uniquely name the file
-    const fileName = `${Date.now()}-${file.name}`;
+    const fileName = `${Date.now()}_${file.name}`;
     path = `${path}/${fileName}`; // Ensure the path includes the file name
 
     // Upload the file to Supabase Storage

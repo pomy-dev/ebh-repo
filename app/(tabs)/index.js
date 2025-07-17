@@ -1,15 +1,29 @@
 import { useRouter } from 'expo-router';
 import { Icons } from '../../constant/icons';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated, ActivityIndicator } from 'react-native';
 import { useAuth } from '../../context/app-state/auth-context';
-import { useEffect, useState } from 'react';
-import { apartmentUserDetails } from '../../services/supabase-services'
+import { useEffect, useState, useRef } from 'react';
+import { apartmentUserDetails } from '../../services/supabase-services';
+import { Picker } from '@react-native-picker/picker';
 
 const HomeScreen = () => {
   const { authState } = useAuth();
-  const [tenantDetails, setTenantDetails] = useState([])
-  const [currentTenantDetails, setCurrentTenantDetails] = useState([])
+  const [tenantDetails, setTenantDetails] = useState([]);
+  const [currentTenantDetails, setCurrentTenantDetails] = useState(0);
+  const shimmerAnim = useRef(new Animated.Value(0)).current;
 
+  useEffect(() => {
+    // Shimmer animation loop
+    const shimmer = Animated.loop(
+      Animated.timing(shimmerAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      })
+    );
+    shimmer.start();
+    return () => shimmer.stop();
+  }, [shimmerAnim]);
 
   if (!authState || authState.authenticated === null) {
     return (
@@ -22,40 +36,103 @@ const HomeScreen = () => {
   if (!authState.authenticated || !authState.user) {
     return (
       <View style={styles.centered}>
-        <Text>You are not logged in.</Text>
+        <Text style={styles.errorText}>You are not logged in.</Text>
       </View>
     );
   }
 
   useEffect(() => {
     const fetchTenantInfo = async () => {
-      const tenantInfo = await apartmentUserDetails(authState?.user?.id)
+      const tenantInfo = await apartmentUserDetails(authState?.user?.id);
       if (!tenantInfo) {
-        renderErrorTenant();
         return;
-      };
-
-      setTenantDetails(tenantInfo[0])
-
-      // setTenantDetails(tenantInfo[0])
-      setCurrentTenantDetails(tenantInfo)
-    }
+      }
+      setTenantDetails(tenantInfo);
+    };
 
     fetchTenantInfo();
-  }, [])
+  }, []);
 
   const renderErrorTenant = () => {
-    if (!tenantDetails) {
+    if (!tenantDetails && tenantDetails.length === 0) {
       return (
-        <View>
-          {/* display message that apartment info can not be found */}
-          <Text>
-            Oops! Looks like your Apartment Details could not be found.
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorTitle}>No Apartment Details Found</Text>
+          <Text style={styles.errorText}>
+            Oops! Looks like your apartment details could not be found. Please contact the owner.
           </Text>
         </View>
-      )
+      );
     }
-  }
+  };
+
+  const renderLoadingCard = () => {
+    return (
+      <View style={styles.propertyCard}>
+        <Animated.View style={[
+          styles.loadingImage,
+          {
+            opacity: shimmerAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [0.3, 0.8, 0.3],
+            }),
+            transform: [
+              {
+                translateX: shimmerAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-100, 300],
+                }),
+              },
+            ],
+          },
+        ]} />
+        <View style={styles.propertyInfo}>
+          <Animated.View style={[styles.loadingText, {
+            opacity: shimmerAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [0.3, 0.8, 0.3],
+            }),
+          }]} />
+          <Animated.View style={[styles.loadingTextSmall, {
+            opacity: shimmerAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [0.3, 0.8, 0.3],
+            }),
+          }]} />
+          <View style={styles.propertyMeta}>
+            <View style={styles.propertyDetail}>
+              <Animated.View style={[styles.loadingTextSmall, {
+                opacity: shimmerAnim.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0.3, 0.8, 0.3],
+                }),
+              }]} />
+              <Animated.View style={[styles.loadingText, {
+                opacity: shimmerAnim.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0.3, 0.8, 0.3],
+                }),
+              }]} />
+            </View>
+            <View style={styles.propertyDetail}>
+              <Animated.View style={[styles.loadingTextSmall, {
+                opacity: shimmerAnim.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0.3, 0.8, 0.3],
+                }),
+              }]} />
+              <Animated.View style={[styles.loadingText, {
+                opacity: shimmerAnim.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0.3, 0.8, 0.3],
+                }),
+              }]} />
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   const router = useRouter();
   const { name } = authState.user;
@@ -68,33 +145,26 @@ const HomeScreen = () => {
         transition={{ type: 'timing', duration: 300 }}
         style={styles.header}
       >
-
-        <View>
-          <Text style={styles.greeting}>Hello, {name}</Text>
-          <Text style={styles.subtitle}>Welcome to your dashboard</Text>
+        <View style={styles.picker}>
+          <Text style={styles.greeting}>{name}</Text>
+          <View style={styles.unitPickerContainer}>
+            <Picker
+              selectedValue={currentTenantDetails}
+              onValueChange={(itemValue) => setCurrentTenantDetails(itemValue)}
+              style={styles.unitPicker}
+              mode='dropdown'
+            >
+              {tenantDetails.map((tenant, index) => (
+                <Picker.Item
+                  key={index}
+                  label={`${tenant?.property_apartments?.unit}-${tenant?.property_apartments.properties?.property_name}` || `Unit ${index + 1}`}
+                  value={index}
+                />
+              ))}
+            </Picker>
+          </View>
         </View>
-        {/* <Image
-          source={require('../../assets/pomy.png')}
-          style={styles.avatar}
-        /> */}
-        {/* create a dropdown for {tenantDetails?.property_apartments?.unit} at  */}
-
-
-        {/* const fetchTenantInfo = async () => {
-              const tenantInfo = await apartmentUserDetails(authState?.user?.id)
-              if (!tenantInfo) {
-                renderErrorTenant();
-                return;
-              };
-
-              setTenantDetails(tenantInfo[0])
-        } */}
-
-        {/* fetchTenantInfo(); */}
-
-        {/* this code must allow change of unit from the array of units */}
-
-
+        <Text style={styles.subtitle}>Welcome to your dashboard</Text>
       </View>
 
       <ScrollView
@@ -106,26 +176,43 @@ const HomeScreen = () => {
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 400, delay: 100 }}
         >
-          <View style={styles.propertyCard}>
-            <Image
-              source={{ uri: tenantDetails?.property_apartments?.unitImages[0] }}
-              style={styles.propertyImage}
-            />
-            <View style={styles.propertyInfo}>
-              <Text style={styles.propertyName}>{tenantDetails?.property_apartments?.properties?.property_name}, {tenantDetails?.property_apartments?.properties?.property_type}</Text>
-              <Text style={styles.propertyAddress}>{tenantDetails?.property_apartments?.unit}</Text>
-              <View style={styles.propertyMeta}>
-                <View style={styles.propertyDetail}>
-                  <Text style={styles.propertyDetailLabel}>Lease Ends</Text>
-                  <Text style={styles.propertyDetailValue}>{tenantDetails?.lease_end_date}</Text>
-                </View>
-                <View style={styles.propertyDetail}>
-                  <Text style={styles.propertyDetailLabel}>Rent Due</Text>
-                  <Text style={styles.propertyDetailValue}>E{tenantDetails?.property_apartments?.monthly_rent}</Text>
+          {tenantDetails.length === 0 ? (
+            renderErrorTenant()
+          ) : (
+            tenantDetails[currentTenantDetails] ? (
+              <View style={styles.propertyCard}>
+                <Image
+                  source={{ uri: tenantDetails[currentTenantDetails]?.property_apartments?.unitImages[0] }}
+                  style={styles.propertyImage}
+                />
+                <View style={styles.propertyInfo}>
+                  <Text style={styles.propertyName}>
+                    {tenantDetails[currentTenantDetails]?.property_apartments?.properties?.property_name},
+                    {tenantDetails[currentTenantDetails]?.property_apartments?.properties?.property_type}
+                  </Text>
+                  <Text style={styles.propertyAddress}>
+                    {tenantDetails[currentTenantDetails]?.property_apartments?.unit}
+                  </Text>
+                  <View style={styles.propertyMeta}>
+                    <View style={styles.propertyDetail}>
+                      <Text style={styles.propertyDetailLabel}>Lease Ends</Text>
+                      <Text style={styles.propertyDetailValue}>
+                        {tenantDetails[currentTenantDetails]?.lease_end_date}
+                      </Text>
+                    </View>
+                    <View style={styles.propertyDetail}>
+                      <Text style={styles.propertyDetailLabel}>Rent Due</Text>
+                      <Text style={styles.propertyDetailValue}>
+                        E{tenantDetails[currentTenantDetails]?.property_apartments?.monthly_rent}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               </View>
-            </View>
-          </View>
+            ) : (
+              renderLoadingCard()
+            )
+          )}
         </View>
 
         <View
@@ -158,8 +245,7 @@ const HomeScreen = () => {
               <Text style={styles.actionText}>Houses</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionCard}
-            >
+            <TouchableOpacity style={styles.actionCard}>
               <View style={[styles.actionIcon, { backgroundColor: '#FEF2F2' }]}>
                 <Icons.AntDesign name='bells' size={24} color="#DC2626" />
               </View>
@@ -237,15 +323,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 15,
+    paddingTop: 50,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6'
+  },
+  picker: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 30,
-    paddingBottom: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
   },
   greeting: {
     fontSize: 24,
@@ -257,25 +345,52 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6B7280',
   },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  unitPickerContainer: {
+    width: 150,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+  },
+  unitPicker: {
+    height: 50,
+    paddingHorizontal: 3,
+    color: '#1F2937',
   },
   scrollContent: {
     padding: 16,
     paddingBottom: 40,
+  },
+  errorContainer: {
+    backgroundColor: '#FFF1F2',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FECDD3',
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#DC2626',
+    marginBottom: 8,
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#DC2626',
+    textAlign: 'center',
   },
   propertyCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     overflow: 'hidden',
     marginBottom: 24,
-    elevation: 2,
     shadowColor: '#000',
+    elevation: 0,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowRadius: 4,
   },
   propertyImage: {
     width: '100%',
@@ -309,6 +424,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#1F2937',
+  },
+  loadingImage: {
+    width: '100%',
+    height: 160,
+    backgroundColor: '#E5E7EB',
+    transform: [{ translateX: -100 }],
+  },
+  loadingText: {
+    width: '80%',
+    height: 20,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+  loadingTextSmall: {
+    width: '60%',
+    height: 16,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 4,
+    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 18,
