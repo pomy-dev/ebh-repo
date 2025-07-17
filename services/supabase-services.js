@@ -260,6 +260,7 @@ export async function apartmentUserDetails(userId) {
   const { data, error } = await supabase
     .from('tenants')
     .select(`
+      id,
       lease_start_date,
       lease_end_date,
       property_apartments (
@@ -273,7 +274,6 @@ export async function apartmentUserDetails(userId) {
       )
     `)
     .eq('user_id', userId)
-    .single();
 
   if (error) {
     console.error('Error fetching tenant details:', error);
