@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from "@react-navigation/native";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { Icons } from '../../constant/icons';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/app-state/auth-context';
 import { getMaintenanceRequestsByTenantId } from '../../services/supabase-services'
+import { usePaymentContext } from "../../context/app-state/PaymentContext";
 
 const MaintenanceScreen = () => {
   const router = useRouter();
@@ -13,6 +15,7 @@ const MaintenanceScreen = () => {
   const [queries, setQueries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { tenantID } = usePaymentContext();
 
   if (!authState || authState.authenticated === null) {
     return (
@@ -35,7 +38,7 @@ const MaintenanceScreen = () => {
       try {
         setLoading(true);
         const tenant_id = authState?.user?.tenant_id;
-        const queryRequests = await getMaintenanceRequestsByTenantId(tenant_id);
+        const queryRequests = await getMaintenanceRequestsByTenantId(tenantID.id);
 
         if (queryRequests) {
           setQueries(queryRequests);
@@ -51,7 +54,31 @@ const MaintenanceScreen = () => {
     };
 
     fetchQueries();
-  }, [authState?.user?.tenant_id]);
+  }, [tenantID?.id]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchQueries = async () => {
+        try {
+          setLoading(true);
+          // const tenant_id = authState?.user?.tenant_id;
+          const queryRequests = await getMaintenanceRequestsByTenantId(tenantID.id);
+
+          if (queryRequests) {
+            setQueries(queryRequests);
+          }
+
+        } catch (err) {
+          setError('Failed to fetch maintenance requests');
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchQueries();
+    }, [tenantID?.id])
+  );
 
   // Filter queries based on activeTab and searchQuery
   const filteredQueries = queries.filter(query => {
