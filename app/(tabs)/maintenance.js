@@ -1,12 +1,66 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { Icons } from '../../constant/icons';
 import { useRouter } from 'expo-router';
-const MaintenanceScreen = () => {
+import { useAuth } from '../../context/app-state/auth-context';
+import { getMaintenanceRequestsByTenantId } from '../../services/supabase-services'
 
+const MaintenanceScreen = () => {
   const router = useRouter();
+  const { authState } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [queries, setQueries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  if (!authState || authState.authenticated === null) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#2563EB" />
+      </View>
+    );
+  }
+
+  if (!authState.authenticated || !authState.user) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>You are not logged in.</Text>
+      </View>
+    );
+  }
+
+  useEffect(() => {
+    const fetchQueries = async () => {
+      try {
+        setLoading(true);
+        const tenant_id = authState?.user?.tenant_id;
+        const queryRequests = await getMaintenanceRequestsByTenantId(tenant_id);
+
+        if (queryRequests) {
+          setQueries(queryRequests);
+        } else {
+          setQueries([]);
+        }
+      } catch (err) {
+        setError('Failed to fetch maintenance requests');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQueries();
+  }, [authState?.user?.tenant_id]);
+
+  // Filter queries based on activeTab and searchQuery
+  const filteredQueries = queries.filter(query => {
+    const matchesTab = activeTab === 'all' || query.status === activeTab;
+    const matchesSearch = !searchQuery ||
+      query.case_title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      query.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesTab && matchesSearch;
+  });
 
   const renderStatus = (status) => {
     switch (status) {
@@ -38,27 +92,23 @@ const MaintenanceScreen = () => {
             <Text style={[styles.statusText, { color: '#DC2626' }]}>Cancelled</Text>
           </View>
         );
+      default:
+        return null;
     }
   };
 
   return (
     <View style={styles.container}>
       <View
-        from={{ opacity: 0, translateY: -10 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ type: 'timing', duration: 300 }}
         style={styles.header}
       >
         <Text style={styles.headerTitle}>Maintenance Requests</Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => { router.push('/(screens)/maintenance') }}>
+        <TouchableOpacity style={styles.addButton} onPress={() => router.push('/(screens)/maintenance')}>
           <Icons.MaterialCommunityIcons name='clipboard-plus-outline' size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
 
       <View
-        from={{ opacity: 0, translateY: 20 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ type: 'timing', duration: 400, delay: 100 }}
         style={styles.searchContainer}
       >
         <Icons.EvilIcons name='search' size={20} color="#9CA3AF" />
@@ -71,9 +121,6 @@ const MaintenanceScreen = () => {
       </View>
 
       <View
-        from={{ opacity: 0, translateY: 20 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ type: 'timing', duration: 400, delay: 200 }}
         style={styles.tabsContainer}
       >
         <ScrollView
@@ -81,31 +128,17 @@ const MaintenanceScreen = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.tabs}
         >
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'all' && styles.activeTab]}
-            onPress={() => setActiveTab('all')}
-          >
-            <Text style={[styles.tabText, activeTab === 'all' && styles.activeTabText]}>All</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'pending' && styles.activeTab]}
-            onPress={() => setActiveTab('pending')}
-          >
-            <Text style={[styles.tabText, activeTab === 'pending' && styles.activeTabText]}>Pending</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'inProgress' && styles.activeTab]}
-            onPress={() => setActiveTab('inProgress')}
-          >
-            <Text style={[styles.tabText, activeTab === 'inProgress' && styles.activeTabText]}>In Progress</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'completed' && styles.activeTab]}
-            onPress={() => setActiveTab('completed')}
-          >
-            <Text style={[styles.tabText, activeTab === 'completed' && styles.activeTabText]}>Completed</Text>
-          </TouchableOpacity>
+          {['all', 'pending', 'inProgress', 'completed'].map(tab => (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tab, activeTab === tab && styles.activeTab]}
+              onPress={() => setActiveTab(tab)}
+            >
+              <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
+                {tab.charAt(0).toUpperCase() + tab.slice(1).replace('inProgress', 'In Progress')}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
       </View>
 
@@ -113,56 +146,35 @@ const MaintenanceScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ type: 'timing', duration: 400, delay: 300 }}
-        >
-          <TouchableOpacity style={styles.requestCard}>
-            <View style={styles.requestHeader}>
-              <Text style={styles.requestId}>#REQ-2023-001</Text>
-              {renderStatus('inProgress')}
-            </View>
-            <Text style={styles.requestTitle}>Leaking Kitchen Faucet</Text>
-            <Text style={styles.requestDesc}>
-              The kitchen sink faucet is continuously dripping water even when turned off completely.
-            </Text>
-            <View style={styles.requestFooter}>
-              <Text style={styles.requestDate}>Submitted: May 15, 2025</Text>
-              <Text style={styles.requestPriority}>High Priority</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.requestCard}>
-            <View style={styles.requestHeader}>
-              <Text style={styles.requestId}>#REQ-2023-002</Text>
-              {renderStatus('completed')}
-            </View>
-            <Text style={styles.requestTitle}>Bathroom Light Fixture</Text>
-            <Text style={styles.requestDesc}>
-              The light fixture in the main bathroom is flickering and sometimes doesn't turn on.
-            </Text>
-            <View style={styles.requestFooter}>
-              <Text style={styles.requestDate}>Submitted: May 10, 2025</Text>
-              <Text style={styles.requestPriority}>Medium Priority</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.requestCard}>
-            <View style={styles.requestHeader}>
-              <Text style={styles.requestId}>#REQ-2023-003</Text>
-              {renderStatus('pending')}
-            </View>
-            <Text style={styles.requestTitle}>Air Conditioning Not Working</Text>
-            <Text style={styles.requestDesc}>
-              The AC unit in the living room is not cooling properly. The fan runs but the air is not cold.
-            </Text>
-            <View style={styles.requestFooter}>
-              <Text style={styles.requestDate}>Submitted: May 18, 2025</Text>
-              <Text style={styles.requestPriority}>High Priority</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+        {loading ? (
+          <ActivityIndicator size="large" color="#2563EB" style={styles.centered} />
+        ) : error ? (
+          <View style={styles.centered}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : filteredQueries.length > 0 ? (
+          filteredQueries.map((query, index) => (
+            <TouchableOpacity style={styles.requestCard} key={index}>
+              <View style={styles.requestHeader}>
+                <Text style={styles.requestId}>#REQ-{index + 1}</Text>
+                {renderStatus(query?.status)}
+              </View>
+              <Text style={styles.requestTitle}>{query?.case_title || 'Untitled'}</Text>
+              <Text style={styles.requestDesc}>
+                {query?.description || 'No description provided'}
+              </Text>
+              <View style={styles.requestFooter}>
+                <Text style={styles.requestDate}>
+                  Submitted: {query?.created_at ? new Date(query.created_at).toLocaleDateString() : 'N/A'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <View style={styles.centered}>
+            <Text style={styles.errorText}>No maintenance requests found</Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -172,6 +184,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F9FAFB',
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#DC2626',
+    textAlign: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -301,11 +323,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
   },
-  requestPriority: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#EF4444',
-  },
 });
 
-export default MaintenanceScreen;
+export default MaintenanceScreen; 

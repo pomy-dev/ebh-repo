@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import {
   View,
@@ -6,29 +6,54 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
+  ActivityIndicator,
   Switch,
 } from "react-native";
 import { useAuth } from "../../context/app-state/auth-context";
 import { Icons } from "../../constant/icons";
 
 const SettingsScreen = () => {
-  const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
-  const [emailAlertsEnabled, setEmailAlertsEnabled] = React.useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = React.useState(false);
-  const { onLogout } = useAuth();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [emailAlertsEnabled, setEmailAlertsEnabled] = useState(true);
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState(null);
+  const { onLogout, authState } = useAuth();
   const router = useRouter();
 
-  const handleLogout = () => {
-    onLogout()
-      .then(() => {
-        console.log("Logged out!");
-        router.replace("/(auth)/login");
-      })
-      .catch((error) => {
-        console.error("Logout failed:", error);
-      });
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    setLogoutError(null);
+    try {
+      const result = await onLogout();
+      if (result.error) {
+        setLogoutError(result.msg || 'Logout failed');
+        setIsLoggingOut(false);
+        return;
+      }
+      router.replace("/(auth)/login");
+    } catch (error) {
+      setLogoutError(error.message || 'Logout failed');
+      setIsLoggingOut(false);
+    }
   };
+
+  if (isLoggingOut) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#2563EB" />
+        <Text style={styles.loadingText}>Logging out...</Text>
+      </View>
+    );
+  }
+
+  if (!authState?.authenticated || !authState?.user) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>You are not logged in.</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -40,21 +65,20 @@ const SettingsScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        {logoutError && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{logoutError}</Text>
+          </View>
+        )}
+
         <View style={styles.profileSection}>
-          <Image
-            source={require("../../assets/pomy.png")}
-            style={styles.profileImage}
-          />
+          <Icons.EvilIcons name="user" size={64} color="black" style={{ marginLeft: 10 }} />
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Pomy Nxumalo</Text>
-            <Text style={styles.profileEmail}>pomy.nxumalo@gmail.com</Text>
+            <Text style={styles.profileName}>{authState?.user?.name || "N/A"}</Text>
+            <Text style={styles.profileEmail}>{authState?.user?.email || "N/A"}</Text>
           </View>
           <TouchableOpacity
-            onPress={() => {
-              router.push({
-                pathname: "/(screens)/PersonalInfoScreen",
-              });
-            }}
+            onPress={() => router.push("/(screens)/PersonalInfoScreen")}
             style={styles.editButton}
           >
             <Text style={styles.editButtonText}>Edit</Text>
@@ -62,20 +86,14 @@ const SettingsScreen = () => {
         </View>
 
         <View>
-          <Text style={styles.sectionTitle}>Account</Text>
+          <Text style={styles.sectionTitle}>User Details</Text>
 
           <TouchableOpacity
-            onPress={() => {
-              router.push({
-                pathname: "/(screens)/PersonalInfoScreen",
-              });
-            }}
+            onPress={() => router.push("/(screens)/PersonalInfoScreen")}
             style={styles.menuItem}
           >
             <View style={styles.menuItemLeft}>
-              <View
-                style={[styles.menuItemIcon, { backgroundColor: "#EEF2FF" }]}
-              >
+              <View style={[styles.menuItemIcon, { backgroundColor: "#EEF2FF" }]}>
                 <Icons.EvilIcons name="user" size={20} color="#4F46E5" />
               </View>
               <Text style={styles.menuItemText}>Personal Information</Text>
@@ -84,17 +102,11 @@ const SettingsScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => {
-              router.push({
-                pathname: "/(screens)/PaymentMethodsScreen",
-              });
-            }}
+            onPress={() => router.push("/(screens)/PaymentMethodsScreen")}
             style={styles.menuItem}
           >
             <View style={styles.menuItemLeft}>
-              <View
-                style={[styles.menuItemIcon, { backgroundColor: "#FEF2F2" }]}
-              >
+              <View style={[styles.menuItemIcon, { backgroundColor: "#FEF2F2" }]}>
                 <Icons.AntDesign name="creditcard" size={20} color="#DC2626" />
               </View>
               <Text style={styles.menuItemText}>Payment Methods</Text>
@@ -103,17 +115,11 @@ const SettingsScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => {
-              router.push({
-                pathname: "/(screens)/PropertyDetailsScreen",
-              });
-            }}
+            onPress={() => router.push("/(screens)/PropertyDetailsScreen")}
             style={styles.menuItem}
           >
             <View style={styles.menuItemLeft}>
-              <View
-                style={[styles.menuItemIcon, { backgroundColor: "#F0FDF4" }]}
-              >
+              <View style={[styles.menuItemIcon, { backgroundColor: "#F0FDF4" }]}>
                 <Icons.FontAwesome name="home" size={20} color="#16A34A" />
               </View>
               <Text style={styles.menuItemText}>Property Details</Text>
@@ -122,17 +128,11 @@ const SettingsScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => {
-              router.push({
-                pathname: "/(screens)/SecuritySettingsScreen",
-              });
-            }}
+            onPress={() => router.push("/(screens)/SecuritySettingsScreen")}
             style={styles.menuItem}
           >
             <View style={styles.menuItemLeft}>
-              <View
-                style={[styles.menuItemIcon, { backgroundColor: "#F5F3FF" }]}
-              >
+              <View style={[styles.menuItemIcon, { backgroundColor: "#F5F3FF" }]}>
                 <Icons.Feather name="lock" size={20} color="#8B5CF6" />
               </View>
               <Text style={styles.menuItemText}>Security Settings</Text>
@@ -142,15 +142,11 @@ const SettingsScreen = () => {
         </View>
 
         <View>
-          <Text style={[styles.sectionTitle, { marginTop: 24 }]}>
-            Preferences
-          </Text>
+          <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Preferences</Text>
 
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
-              <View
-                style={[styles.menuItemIcon, { backgroundColor: "#FEF3C7" }]}
-              >
+              <View style={[styles.menuItemIcon, { backgroundColor: "#FEF3C7" }]}>
                 <Icons.AntDesign name="bells" size={20} color="#D97706" />
               </View>
               <Text style={styles.menuItemText}>Push Notifications</Text>
@@ -165,9 +161,7 @@ const SettingsScreen = () => {
 
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
-              <View
-                style={[styles.menuItemIcon, { backgroundColor: "#DBEAFE" }]}
-              >
+              <View style={[styles.menuItemIcon, { backgroundColor: "#DBEAFE" }]}>
                 <Icons.Ionicons name="mail-outline" size={20} color="#2563EB" />
               </View>
               <Text style={styles.menuItemText}>Email Alerts</Text>
@@ -182,9 +176,7 @@ const SettingsScreen = () => {
 
           <View style={styles.toggleItem}>
             <View style={styles.menuItemLeft}>
-              <View
-                style={[styles.menuItemIcon, { backgroundColor: "#E0E7FF" }]}
-              >
+              <View style={[styles.menuItemIcon, { backgroundColor: "#E0E7FF" }]}>
                 <Icons.Ionicons name="moon-outline" size={20} color="#4F46E5" />
               </View>
               <Text style={styles.menuItemText}>Dark Mode</Text>
@@ -202,17 +194,11 @@ const SettingsScreen = () => {
           <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Support</Text>
 
           <TouchableOpacity
-            onPress={() => {
-              router.push({
-                pathname: "/(screens)/HelpCenterScreen",
-              });
-            }}
+            onPress={() => router.push("/(screens)/HelpCenterScreen")}
             style={styles.menuItem}
           >
             <View style={styles.menuItemLeft}>
-              <View
-                style={[styles.menuItemIcon, { backgroundColor: "#F0FDF4" }]}
-              >
+              <View style={[styles.menuItemIcon, { backgroundColor: "#F0FDF4" }]}>
                 <Icons.Ionicons name="help-outline" size={20} color="#16A34A" />
               </View>
               <Text style={styles.menuItemText}>Help Center</Text>
@@ -220,16 +206,16 @@ const SettingsScreen = () => {
             <Icons.Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+          <TouchableOpacity
+            style={[styles.menuItem, isLoggingOut && styles.disabledButton]}
+            onPress={handleLogout}
+            disabled={isLoggingOut}
+          >
             <View style={styles.menuItemLeft}>
-              <View
-                style={[styles.menuItemIcon, { backgroundColor: "#FEF2F2" }]}
-              >
+              <View style={[styles.menuItemIcon, { backgroundColor: "#FEF2F2" }]}>
                 <Icons.AntDesign name="logout" size={20} color="#DC2626" />
               </View>
-              <Text style={[styles.menuItemText, { color: "#DC2626" }]}>
-                Log Out
-              </Text>
+              <Text style={[styles.menuItemText, { color: "#DC2626" }]}>Log Out</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -246,6 +232,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F9FAFB",
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#1F2937",
+  },
+  errorContainer: {
+    backgroundColor: "#FEE2E2",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#DC2626",
+    textAlign: "center",
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
   header: {
     paddingHorizontal: 24,
@@ -276,12 +286,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
-  },
-  profileImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    marginRight: 16,
   },
   profileInfo: {
     flex: 1,
