@@ -38,29 +38,15 @@ const PaymentsScreen = () => {
   const { authState } = useAuth();
   const { name, email, user_number } = authState?.user;
 
-  const getTennantID = async () => {
-    const { data: tenants, error: tenantError } = await supabase
-      .from("tenants")
-      .select("id")
-      .eq("user_id", authState?.user?.id)
-      .single();
-
-    if (tenantError || !tenants) {
-      console.error("Tenant not found");
-      return;
-    }
-
-    return tenants.id;
-  };
+ 
 
   useEffect(() => {
     const fetchPayments = async () => {
-      const tenantId = await getTennantID();
       // Fetch payments for the user
       const { data, error } = await supabase
         .from("payments")
         .select("*")
-        .eq("tenant_id", tenantId);
+        .eq("tenant_id", authState?.user?.tenant_id);
 
       if (error) {
         console.error("Error fetching payments:", error);
@@ -75,7 +61,6 @@ const PaymentsScreen = () => {
 
   const savePayment = async () => {
     let method = selectedMethod2;
-    const tenantId = await getTennantID();
     const { data, error } = await supabase
       .from("payments")
       .insert({
@@ -85,7 +70,7 @@ const PaymentsScreen = () => {
         account,
         reference,
         updated_at: new Date().toISOString(),
-        tenant_id: tenantId,
+        tenant_id: authState?.user?.tenant_id,
       })
       .select();
 
