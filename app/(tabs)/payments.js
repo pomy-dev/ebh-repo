@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect  } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import {
 import { Icons } from "../../constant/icons";
 import BottomSheetModal from "../../components/bottom-sheet";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
+import { usePaymentContext } from "../../context/app-state/PaymentContext";
 
 // local modules
 import { supabase } from "../../utils/supabase-client";
@@ -34,26 +36,26 @@ const PaymentsScreen = () => {
   const [payments, setPayments] = useState([]);
   const [user_id, setUser_id] = useState("");
 
-  //temporaly catch the method before change
   const router = useRouter();
   const { authState } = useAuth();
+  const { name, email, user_number } = authState?.user;
+
+  const {tenantID } = usePaymentContext();
+
+ 
 
   useEffect(() => {
     const fetchPayments = async () => {
-      const userId = authState?.user?.id;
-      setUser_id(userId); // Set the user ID state
-
       // Fetch payments for the user
       const { data, error } = await supabase
         .from("payments")
         .select("*")
-        .eq("user_id", userId); // Use userId from the fetched value
+        .eq("tenant_id", tenantID?.id);
 
       if (error) {
         console.error("Error fetching payments:", error);
       } else {
         setPayments(data);
-
         setTransactionStatus(false); // Set the payments state
       }
     };
@@ -61,11 +63,42 @@ const PaymentsScreen = () => {
     fetchPayments(); // Initial fetch
   }, [transactionStatus]);
 
+useFocusEffect(
+  React.useCallback(() => {
+    const fetchPayments = async () => {
+      if (!tenantID?.id) return; // safeguard
+      const { data, error } = await supabase
+        .from("payments")
+        .select("*")
+        .eq("tenant_id", tenantID.id);
+
+      if (error) {
+        console.error("Error fetching payments:", error);
+      } else {
+        setPayments(data);
+        setTransactionStatus(false);
+      }
+    };
+
+    fetchPayments();
+  }, [tenantID?.id, transactionStatus])
+);
+
+
   const savePayment = async () => {
     let method = selectedMethod2;
     const { data, error } = await supabase
       .from("payments")
-      .insert({ user_id, month, amount, method, account, reference })
+      .insert({
+        month,
+        amount,
+        method,
+        account,
+        reference,
+        updated_at: new Date().toISOString(),
+        tenant_id: tenantID?.id,
+        apt_id: tenantID?.aptId,
+      })
       .select();
 
     if (error) {
