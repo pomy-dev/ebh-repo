@@ -32,7 +32,7 @@ const Register = () => {
       return;
     }
 
-    const result = await onRegister(name, email, phone, password, confirmPassword, aptKey);
+    const result = await onRegister(name, email, phone, password, confirmPassword);
     if (result?.error) {
       setError(result.msg);
       setLoading(false);
@@ -150,7 +150,7 @@ const Register = () => {
 
           <TouchableOpacity style={styles.button} disabled={loading} onPress={handleRegister}>
             {loading ?
-              (<ActivityIndicator size={30} color='#ffffff' />)
+              (<ActivityIndicator size={25} color='#ffffff' />)
               : (<Text style={styles.buttonText}>Sign Up</Text>)}
           </TouchableOpacity>
         </View>
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 20,
     marginTop: 16,
   },
   backButton: {

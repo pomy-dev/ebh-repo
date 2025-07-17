@@ -100,7 +100,7 @@ const Login = () => {
 
           <TouchableOpacity style={styles.button} disabled={loading} onPress={handleLogin}>
             {loading ? (
-              <ActivityIndicator size={30} color="#ffffff" />
+              <ActivityIndicator size={25} color="#ffffff" />
             ) : (
               <Text style={styles.buttonText}>Sign In</Text>
             )}
