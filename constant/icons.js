@@ -1,4 +1,4 @@
-import { Ionicons, AntDesign, Feather, MaterialIcons, FontAwesome6, FontAwesome, MaterialCommunityIcons, EvilIcons } from "@expo/vector-icons";
+import { Ionicons, AntDesign, Feather, MaterialIcons, FontAwesome6, FontAwesome5, FontAwesome, MaterialCommunityIcons, EvilIcons } from "@expo/vector-icons";
 
 export const Icons = {
   Ionicons,
@@ -6,6 +6,7 @@ export const Icons = {
   Feather,
   MaterialIcons,
   FontAwesome,
+  FontAwesome5,
   FontAwesome6,
   MaterialCommunityIcons,
   EvilIcons

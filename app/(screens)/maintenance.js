@@ -16,7 +16,7 @@ import { Icons } from '../../constant/icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { useAuth } from '../../context/app-state/auth-context';
-import { request_maintenance, uploadMultipleImages } from '../../services/supabase-services';
+import { request_maintenance, uploadImage } from '../../services/supabase-services';
 
 const generateId = () => `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
@@ -156,8 +156,11 @@ const Maintenance = () => {
             const userId = authState.user.id;
             console.log('User Loggin UUID:', userId)
 
-            const imageResults = await uploadMultipleImages(images.map(image => image));
-            const files_url = imageResults.map(result => result.url);
+            const imageUrls = await Promise.all(images.map(file => {
+                const httpsUrl = uploadImage('uploads', file)
+                return httpsUrl;
+            }))
+            const files_url = imageUrls.map(result => result.url);
             files_url.forEach((url, index) => {
                 console.log(`Image [${index}] => ${url}`)
             })
@@ -242,7 +245,7 @@ const Maintenance = () => {
 
                         <TouchableOpacity style={styles.imageOption} onPress={pickImage}>
                             <Icons.Ionicons name='images-outline' size={24} color="#4F46E5" />
-                            <Text style={styles.imageOptionText}>Choose from Gallery</Text>
+                            <Text style={styles.imageOptionText}>Gallery</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -382,10 +385,11 @@ const styles = StyleSheet.create({
     },
     imagesScroll: {
         flexDirection: 'row',
+        padding: 8
     },
     imagePreview: {
         position: 'relative',
-        marginRight: 10,
+        marginRight: 10
     },
     previewImage: {
         width: 100,

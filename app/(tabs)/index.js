@@ -2,9 +2,12 @@ import { useRouter } from 'expo-router';
 import { Icons } from '../../constant/icons';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../../context/app-state/auth-context';
+import { useEffect, useState } from 'react';
+import { apartmentUserDetails } from '../../services/supabase-services'
 
 const HomeScreen = () => {
   const { authState } = useAuth();
+  const [tenantDetails, setTenantDetails] = useState({})
 
   if (!authState || authState.authenticated === null) {
     return (
@@ -20,6 +23,33 @@ const HomeScreen = () => {
         <Text>You are not logged in.</Text>
       </View>
     );
+  }
+
+  useEffect(() => {
+    const fetchTenantInfo = async () => {
+      const tenantInfo = await apartmentUserDetails(authState?.user?.id)
+      if (!tenantInfo) {
+        renderErrorTenant();
+        return;
+      };
+
+      setTenantDetails(tenantInfo)
+    }
+
+    fetchTenantInfo();
+  }, [])
+
+  const renderErrorTenant = () => {
+    if (!tenantDetails) {
+      return (
+        <View>
+          {/* display message that apartment info can not be found */}
+          <Text>
+            Oops! Looks like your Apartment Details could not be found.
+          </Text>
+        </View>
+      )
+    }
   }
 
   const router = useRouter();
@@ -55,20 +85,20 @@ const HomeScreen = () => {
         >
           <View style={styles.propertyCard}>
             <Image
-              source={require('../../assets/house1.jpg')}
+              source={{ uri: tenantDetails?.property_apartments?.unitImages[0] }}
               style={styles.propertyImage}
             />
             <View style={styles.propertyInfo}>
-              <Text style={styles.propertyName}>E.N.P.F Apartments</Text>
-              <Text style={styles.propertyAddress}>Mathatha St, Apt 4B</Text>
+              <Text style={styles.propertyName}>{tenantDetails?.property_apartments?.properties?.property_name}, {tenantDetails?.property_apartments?.properties?.property_type}</Text>
+              <Text style={styles.propertyAddress}>{tenantDetails?.property_apartments?.unit}</Text>
               <View style={styles.propertyMeta}>
                 <View style={styles.propertyDetail}>
                   <Text style={styles.propertyDetailLabel}>Lease Ends</Text>
-                  <Text style={styles.propertyDetailValue}>April 30, 2025</Text>
+                  <Text style={styles.propertyDetailValue}>{tenantDetails?.lease_end_date}</Text>
                 </View>
                 <View style={styles.propertyDetail}>
                   <Text style={styles.propertyDetailLabel}>Rent Due</Text>
-                  <Text style={styles.propertyDetailValue}>E1,450</Text>
+                  <Text style={styles.propertyDetailValue}>E{tenantDetails?.property_apartments?.monthly_rent}</Text>
                 </View>
               </View>
             </View>
@@ -170,7 +200,6 @@ const HomeScreen = () => {
         </View>
       </ScrollView>
     </View>
-    // </SafeAreaView>
   );
 };
 
@@ -189,7 +218,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 30,
     paddingBottom: 20,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,

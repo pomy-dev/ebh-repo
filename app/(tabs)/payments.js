@@ -208,6 +208,7 @@ const PaymentsScreen = () => {
         </View>
       );
     }
+
     if (selectedMethod === "insta") {
       return (
         <View style={styles.container}>
@@ -262,6 +263,7 @@ const PaymentsScreen = () => {
         </View>
       );
     }
+
     if (selectedMethod === "confirm") {
       return (
         <View style={[styles.container, { justifyContent: "center" }]}>
@@ -292,6 +294,7 @@ const PaymentsScreen = () => {
         </View>
       );
     }
+
     if (selectedMethod === "cash") {
       return <Text>No info needed. Pay with cash at delivery.</Text>;
     }
