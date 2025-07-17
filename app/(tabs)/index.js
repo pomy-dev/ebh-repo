@@ -8,6 +8,8 @@ import { apartmentUserDetails } from '../../services/supabase-services'
 const HomeScreen = () => {
   const { authState } = useAuth();
   const [tenantDetails, setTenantDetails] = useState([])
+  const [currentTenantDetails, setCurrentTenantDetails] = useState([])
+
 
   if (!authState || authState.authenticated === null) {
     return (
@@ -34,6 +36,9 @@ const HomeScreen = () => {
       };
 
       setTenantDetails(tenantInfo[0])
+
+      // setTenantDetails(tenantInfo[0])
+      setCurrentTenantDetails(tenantInfo)
     }
 
     fetchTenantInfo();
@@ -68,10 +73,28 @@ const HomeScreen = () => {
           <Text style={styles.greeting}>Hello, {name}</Text>
           <Text style={styles.subtitle}>Welcome to your dashboard</Text>
         </View>
-        <Image
+        {/* <Image
           source={require('../../assets/pomy.png')}
           style={styles.avatar}
-        />
+        /> */}
+        {/* create a dropdown for {tenantDetails?.property_apartments?.unit} at  */}
+
+
+        {/* const fetchTenantInfo = async () => {
+              const tenantInfo = await apartmentUserDetails(authState?.user?.id)
+              if (!tenantInfo) {
+                renderErrorTenant();
+                return;
+              };
+
+              setTenantDetails(tenantInfo[0])
+        } */}
+
+        {/* fetchTenantInfo(); */}
+
+        {/* this code must allow change of unit from the array of units */}
+
+
       </View>
 
       <ScrollView
