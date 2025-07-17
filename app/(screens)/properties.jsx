@@ -21,7 +21,15 @@ import { useRouter } from "expo-router";
 import { Icons } from "../../constant/icons";
 import { useAuth } from '../../context/app-state/auth-context';
 import PropertyCard from "../../components/property-card";
-import { getApartmentsWithProperty, fetchApplicationByEmail, deleteApplication, makeTenant, updateUser } from "../../services/supabase-services";
+import {
+  getApartmentsWithProperty,
+  fetchApplicationByEmail,
+  deleteApplication,
+  makeTenant,
+  updateUser,
+  updateAcceptedApartment,
+  deleteTenantApp
+} from "../../services/supabase-services";
 
 export default function PropertiesScreen() {
   const router = useRouter();
@@ -59,7 +67,6 @@ export default function PropertiesScreen() {
   const handleMakeTenant = async (request) => {
     if (!authState?.authenticated && !authState?.user) return;
     const userId = authState?.user?.id;
-
     setIsAccepting(true)
 
     try {
@@ -106,6 +113,10 @@ export default function PropertiesScreen() {
       setIsAccepting(false);
     }
   }
+
+  // const handleDeleteTenantApp = async (apt_id) => {
+
+  // }
 
   useEffect(() => {
     // fetch apartments
