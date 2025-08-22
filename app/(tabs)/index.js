@@ -64,7 +64,7 @@ const HomeScreen = () => {
         id: tenantInfo[currentTenantDetails]?.id,
         aptId: tenantInfo[currentTenantDetails]?.property_apartments?.id,
       });
-      // setId(tenantInfo[currentTenantDetails].id)
+      
     };
 
     fetchTenantInfo();
