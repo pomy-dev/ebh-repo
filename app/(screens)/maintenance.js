@@ -17,6 +17,8 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { useAuth } from '../../context/app-state/auth-context';
 import { request_maintenance, uploadImage } from '../../services/supabase-services';
+import { usePaymentContext } from "../../context/app-state/PaymentContext";
+
 
 const generateId = () => `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
@@ -28,6 +30,7 @@ const Maintenance = () => {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { tenantID } = usePaymentContext();
 
     // Request permissions
     const requestPermissions = async () => {
@@ -153,7 +156,7 @@ const Maintenance = () => {
                 return;
             }
 
-            const tenantId = authState.user.tenant_id;
+            const tenantId = tenantID.id;
             console.log('Tenant Id:', tenantId)
 
             const imageUrls = await Promise.all(images.map(async (file) => {

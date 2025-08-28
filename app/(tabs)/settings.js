@@ -25,12 +25,12 @@ const SettingsScreen = () => {
     setIsLoggingOut(true);
     setLogoutError(null);
     try {
-      const result = await onLogout();
-      if (result.error) {
-        setLogoutError(result.msg || 'Logout failed');
-        setIsLoggingOut(false);
-        return;
-      }
+      // const result = await onLogout();
+      // if (result.error) {
+      //   setLogoutError(result.msg || 'Logout failed');
+      //   setIsLoggingOut(false);
+      //   return;
+      // }
       router.replace("/(auth)/login");
     } catch (error) {
       setLogoutError(error.message || 'Logout failed');
@@ -114,31 +114,7 @@ const SettingsScreen = () => {
             <Icons.Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => router.push("/(screens)/PropertyDetailsScreen")}
-            style={styles.menuItem}
-          >
-            <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: "#F0FDF4" }]}>
-                <Icons.FontAwesome name="home" size={20} color="#16A34A" />
-              </View>
-              <Text style={styles.menuItemText}>Property Details</Text>
-            </View>
-            <Icons.Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => router.push("/(screens)/SecuritySettingsScreen")}
-            style={styles.menuItem}
-          >
-            <View style={styles.menuItemLeft}>
-              <View style={[styles.menuItemIcon, { backgroundColor: "#F5F3FF" }]}>
-                <Icons.Feather name="lock" size={20} color="#8B5CF6" />
-              </View>
-              <Text style={styles.menuItemText}>Security Settings</Text>
-            </View>
-            <Icons.Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-          </TouchableOpacity>
+       
         </View>
 
         <View>

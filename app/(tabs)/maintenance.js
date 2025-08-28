@@ -59,9 +59,11 @@ const MaintenanceScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchQueries = async () => {
+
         try {
           setLoading(true);
           // const tenant_id = authState?.user?.tenant_id;
+   
           const queryRequests = await getMaintenanceRequestsByTenantId(tenantID.id);
 
           if (queryRequests) {
