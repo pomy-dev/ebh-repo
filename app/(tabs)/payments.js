@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Icons } from "../../constant/icons";
 import BottomSheetModal from "../../components/bottom-sheet";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { usePaymentContext } from "../../context/app-state/PaymentContext";
 
@@ -32,17 +32,17 @@ const PaymentsScreen = () => {
   const [account, setAccount] = useState(null);
   const [reference, setReference] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(true);
   const [transactionStatus, setTransactionStatus] = useState(null);
   const [payments, setPayments] = useState([]);
   const [user_id, setUser_id] = useState("");
 
   const router = useRouter();
+  const { passedAmount } = useLocalSearchParams();
   const { authState } = useAuth();
   const { name, email, user_number } = authState?.user;
 
-  const {tenantID } = usePaymentContext();
-
- 
+  const { tenantID } = usePaymentContext();
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -55,35 +55,39 @@ const PaymentsScreen = () => {
       if (error) {
         console.error("Error fetching payments:", error);
       } else {
+        setLoading2(false);
         setPayments(data);
         setTransactionStatus(false); // Set the payments state
       }
     };
 
     fetchPayments(); // Initial fetch
+
   }, [transactionStatus]);
 
-useFocusEffect(
-  React.useCallback(() => {
-    const fetchPayments = async () => {
-      if (!tenantID?.id) return; // safeguard
-      const { data, error } = await supabase
-        .from("payments")
-        .select("*")
-        .eq("tenant_id", tenantID.id);
-
-      if (error) {
-        console.error("Error fetching payments:", error);
-      } else {
-        setPayments(data);
-        setTransactionStatus(false);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (tenantID?.currentTenant) {
+        setAmount(tenantID?.currentTenant?.monthly_rent);
       }
-    };
+      const fetchPayments = async () => {
+        if (!tenantID?.id) return; // safeguard
+        const { data, error } = await supabase
+          .from("payments")
+          .select("*")
+          .eq("tenant_id", tenantID.id);
 
-    fetchPayments();
-  }, [tenantID?.id, transactionStatus])
-);
+        if (error) {
+          console.error("Error fetching payments:", error);
+        } else {
+          setPayments(data);
+          setTransactionStatus(false);
+        }
+      };
 
+      fetchPayments();
+    }, [tenantID?.id, transactionStatus])
+  );
 
   const savePayment = async () => {
     let method = selectedMethod2;
@@ -140,6 +144,7 @@ useFocusEffect(
               style={styles.input}
               keyboardType="numeric"
               placeholderTextColor="#6B7280"
+              value={amount}
               onChangeText={(value) => setAmount(value)}
             />
           </View>
@@ -194,6 +199,7 @@ useFocusEffect(
               style={styles.input}
               keyboardType="numeric"
               placeholderTextColor="#6B7280"
+              value={amount}
               onChangeText={(value) => setAmount(value)}
             />
           </View>
@@ -249,6 +255,7 @@ useFocusEffect(
               style={styles.input}
               keyboardType="numeric"
               placeholderTextColor="#6B7280"
+              value={amount}
               onChangeText={(value) => setAmount(value)}
             />
           </View>
@@ -285,7 +292,8 @@ useFocusEffect(
             <Text style={styles.label}>Account: {account}</Text>
             <Text style={styles.label}>Reference: {reference}</Text>
             <Text style={{ fontSize: 11, textAlign: "center" }}>
-              ***please note no fund for misdirected transaction***
+              *** please note no refund for misdirected transaction, and your
+              rent balance will updated to reflect changes ***
             </Text>
           </View>
           <View style={styles.payButtonText}>
@@ -315,8 +323,24 @@ useFocusEffect(
   };
 
   const PaymentList = () => {
-    // Get the last three payments
-    const displayedPayments = payments.sort((a, b) => b.id - a.id).slice(0, 3);
+    // Sort and get the last three payments
+    const displayedPayments = payments?.sort((a, b) => b.id - a.id).slice(0, 3);
+
+    if (loading2) {
+      return (
+        <View style={styles.centered}>
+          <Text>Loading...</Text>
+        </View>
+      );
+    }
+
+    if (!displayedPayments || displayedPayments.length === 0) {
+      return (
+        <View style={styles.centered}>
+          <Text style={styles.upcomingTitle}>No payments have been made</Text>
+        </View>
+      );
+    }
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -364,7 +388,7 @@ useFocusEffect(
           <Text style={styles.upcomingTitle}>Upcoming Payment</Text>
           <View style={styles.amountContainer}>
             <Text style={styles.currencySymbol}>E</Text>
-            <Text style={styles.amountValue}>1,450</Text>
+            <Text style={styles.amountValue}>{amount}</Text>
             <Text style={styles.amountCents}>.00</Text>
           </View>
           <Text style={styles.dueDate}>Due on April 30, 2025</Text>
@@ -488,7 +512,17 @@ useFocusEffect(
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionLink}>
+          <TouchableOpacity
+            style={styles.actionLink}
+            onPress={() => {
+              router.push({
+                pathname: "/(screens)/paymentDetailScreen",
+                params: {
+                  paymentData: JSON.stringify(payments),
+                },
+              });
+            }}
+          >
             <View style={styles.actionLinkLeft}>
               <View style={[styles.actionIcon, { backgroundColor: "#F0FDF4" }]}>
                 <Icons.MaterialIcons
@@ -764,6 +798,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 12,
+  },
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
   },
 });
 

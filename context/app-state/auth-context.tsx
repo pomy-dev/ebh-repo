@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error || !userRow) {
-        console.error('Failed to fetch user:', error?.message);
+        console.error('Failed to fetch users:', error?.message);
         setAuthState({ token: null, authenticated: false, user: undefined });
         return;
       }

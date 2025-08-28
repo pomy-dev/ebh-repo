@@ -8,7 +8,7 @@ const PaymentContext = createContext(undefined);
 export const PaymentProvider = ({ children }) => {
   const [paymentData, setPaymentData] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
-  const [tenantID, setTennantID] = useState({ id: '', aptId: '' });
+  const [tenantID, setTennantID] = useState({ id: '', aptId: '' , currentTenant:{}});
 
   const storePaymentData = (data) => setPaymentData(data);
   const changeTab = (tab) => setActiveTab(tab);

@@ -62,8 +62,8 @@ const HomeScreen = () => {
       setId({
         id: tenantInfo[currentTenantDetails]?.id,
         aptId: tenantInfo[currentTenantDetails]?.property_apartments?.id,
+        currentTenant: tenantInfo[currentTenantDetails]?.property_apartments,
       });
-      
     };
 
     fetchTenantInfo();
@@ -203,10 +203,10 @@ const HomeScreen = () => {
                 setCurrentTenantDetails(itemValue);
                 setId({
                   id: tenantDetails[itemValue]?.id,
-                  aptId:
-                    tenantDetails[itemValue]?.property_apartments?.id,
+                  aptId: tenantDetails[itemValue]?.property_apartments?.id,
+                  currentTenant: tenantDetails[itemValue]?.property_apartments,
+     
                 });
-         
               }}
               style={styles.unitPicker}
               mode="dropdown"
@@ -299,7 +299,12 @@ const HomeScreen = () => {
           <View style={styles.quickActions}>
             <TouchableOpacity
               style={styles.actionCard}
-              onPress={() => router.push("/payments")}
+              onPress={() => {
+                const paymentData =
+                  tenantDetails[currentTenantDetails]?.property_apartments
+                    ?.monthly_rent;
+                router.push(`/payments?passedAmount=${paymentData}`);
+              }}
             >
               <View style={[styles.actionIcon, { backgroundColor: "#EFF6FF" }]}>
                 <Icons.Feather name="dollar-sign" size={24} color="#2563EB" />
@@ -337,7 +342,7 @@ const HomeScreen = () => {
               <Text style={styles.actionText}>Houses</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.actionCard}>
+            <TouchableOpacity style={styles.actionCard} onPress={() => router.push("/notifications")}>
               <View style={[styles.actionIcon, { backgroundColor: "#FEF2F2" }]}>
                 <Icons.AntDesign name="bells" size={24} color="#DC2626" />
               </View>
