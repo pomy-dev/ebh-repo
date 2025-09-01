@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Icons } from '../../constant/icons';;
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Icons } from '../../constant/icons';
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
